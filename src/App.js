@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import {
@@ -6,6 +7,8 @@ import {
   Link,
   useLocation,
 } from "react-router-dom";
+import { ethers } from "ethers";
+import detectEthereumProvider from '@metamask/detect-provider'
 
 import SendMessagePage from './components/SendMessagePage';
 import YourMessagesPage from './components/YourMessagesPage';
@@ -16,6 +19,20 @@ import {
 import './App.css';
 
 function App() {
+  const [address, setAddress] = useState("");
+
+  useEffect(() => {
+    const getWallet = async () => {
+      const ethereum = await detectEthereumProvider();
+      const provider = new ethers.providers.Web3Provider(ethereum, "any");
+      await provider.send("eth_requestAccounts", []);
+      const address = await provider.getSigner().getAddress();
+      setAddress(address);
+    };
+
+    getWallet();
+  });
+
   let selectedTab = 0;
   const location = useLocation();
   if (location.pathname.includes(PAGE_ROUTE_SEND_MESSAGE)) {
@@ -27,7 +44,13 @@ function App() {
   return (
     <div className="App">
       <div>
-        This is where the app bar goes. PRESTIGE WORLDWIDE!!!
+        {address ? (
+          <p>
+            <strong>Wallet address:</strong> {address}
+          </p>
+        ) : (
+          <p>Fetching wallet..</p>
+        )}
       </div>
       <Tabs value={selectedTab} aria-label="basic tabs example">
         <Link to={"/"} style={{textDecoration: "none"}}>
