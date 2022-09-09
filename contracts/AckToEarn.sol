@@ -54,7 +54,7 @@ contract AckToEarn is Ownable {
     /**
     * @notice Get the unclaimed balance for an account
     */
-    function getUnclaimedBalance(address recipient) public view returns(uint) {
+    function getRecipientUnclaimedBalance(address recipient) public view returns(uint) {
         return recipientUnclaimedBalances[recipient];
     }
 }

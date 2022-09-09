@@ -26,7 +26,7 @@ describe("AckToEarn", function () {
 
       await ackToEarn.sendBid("Some message", otherAccount.address, {value: bidAmount});
 
-      expect(await ackToEarn.getUnclaimedBalance(otherAccount.address))
+      expect(await ackToEarn.getRecipientUnclaimedBalance(otherAccount.address))
           .to.equal(recipientAmount.toString());
     });
 
