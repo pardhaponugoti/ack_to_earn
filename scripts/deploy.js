@@ -8,15 +8,15 @@ const hre = require("hardhat");
 
 async function main() {
   const AckToEarnFactory = await hre.ethers.getContractFactory("AckToEarn");
-  const contract = await AckToEarnFactory.deploy();
+  const ackToEarn = await AckToEarnFactory.deploy();
 
-  await contract.deployed();
+  await ackToEarn.deployed();
 
-  console.log(`AckToEarn contract deployed to ${contract.address}`);
+  console.log(`AckToEarn contract deployed to ${ackToEarn.address}`);
 
   const bidAmount = hre.ethers.utils.parseEther("1");
   // Call the function.
-  let txn = await contract.sendMessage(
+  let txn = await ackToEarn.sendBid(
       "Read this message",
       "0x0000000000000000000000000000000000000001",
       {value: bidAmount, gasLimit: 1000000}
