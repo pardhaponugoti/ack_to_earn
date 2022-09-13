@@ -18,7 +18,7 @@ contract AckToEarn is Ownable, ReentrancyGuard {
         uint id;
         address bidder;
         address recipient;
-        uint amount;
+        uint recipientAmount;
         uint timestamp;
         string message;
         bool claimed;
@@ -38,14 +38,13 @@ contract AckToEarn is Ownable, ReentrancyGuard {
     function sendBid(string memory message, address recipient) external payable {
         require(recipient != address(0), "Recipient cannot be the zero address");
 
-        // The recipient gets 90% of the bid amount
-        uint recipientAmount = (msg.value * 90) / 100;
         uint newBidId = bidIds.current();
         Bid memory bid = Bid({
             id: newBidId,
             bidder: msg.sender,
             recipient: recipient,
-            amount: msg.value,
+            // The recipient gets 90% of the bid amount
+            recipientAmount: (msg.value * 90) / 100,
             message: message,
             timestamp: block.timestamp,
             claimed: false,
@@ -81,7 +80,7 @@ contract AckToEarn is Ownable, ReentrancyGuard {
             if (!bid.exists) {
                 continue;
             }
-            // If the recipient has already claimed the bid, don't allow the balance to be reclaimed
+            // If balance of this bid has already been claimed, don't allow the eth to be reclaimed
             if (bid.claimed) {
                 continue;
             }
@@ -90,8 +89,7 @@ contract AckToEarn is Ownable, ReentrancyGuard {
                 continue;
             }
 
-            uint bidReclaimAmount = (bid.amount * 90) / 100;
-            totalReclaimAmount += bidReclaimAmount;
+            totalReclaimAmount += bid.recipientAmount;
             bidderBids[msg.sender][bidId].claimed = true;
         }
 
@@ -108,9 +106,9 @@ contract AckToEarn is Ownable, ReentrancyGuard {
     * @notice Check if bid is expired
     * @dev Returns true if the bid cannot be found
     */
-    function isBidExpired(uint bidId, address account) public view returns(bool) {
-        bool isBidderAccount = bidderBids[account][bidId].exists == true;
-        bool isRecipientAccount = recipientBids[account][bidId].exists == true;
+    function isBidExpired(uint bidId, address account) internal view returns(bool) {
+        bool isBidderAccount = bidderBids[account][bidId].exists;
+        bool isRecipientAccount = recipientBids[account][bidId].exists;
 
         if (isBidderAccount) {
             return (block.timestamp >= (bidderBids[account][bidId].timestamp + bidExpiryThreshold));

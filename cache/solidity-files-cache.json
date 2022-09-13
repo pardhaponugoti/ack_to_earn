@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/fbyrd/Projects/ack_to_earn/contracts/AckToEarn.sol": {
-      "lastModificationDate": 1662998778464,
-      "contentHash": "5ffc6b4f5119e2e45fe92b209481b98e",
+      "lastModificationDate": 1663034870923,
+      "contentHash": "7d56899d21e1396ab681e17b36945acd",
       "sourceName": "contracts/AckToEarn.sol",
       "solcConfig": {
         "version": "0.8.9",
