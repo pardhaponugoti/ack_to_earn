@@ -10,6 +10,7 @@ import Tab from "@mui/material/Tab";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 
+import HowItWorksPage from "./components/HowItWorksPage";
 import SendMessagePage from "./components/SendMessagePage";
 import YourMessagesPage from "./components/YourMessagesPage";
 
@@ -79,7 +80,7 @@ function App() {
       </Tabs>
       <Routes>
         <Route path="/">
-          <Route index element={<div>Welcome to AckToEarn!</div>} />
+          <Route index element={<HowItWorksPage />} />
           <Route path={PAGE_ROUTE_SEND_MESSAGE} element={<SendMessagePage />} />
           <Route
             path={PAGE_ROUTE_YOUR_MESSAGES}
