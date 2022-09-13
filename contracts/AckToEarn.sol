@@ -9,8 +9,10 @@ import "hardhat/console.sol";
 contract AckToEarn is Ownable, ReentrancyGuard {
     using Counters for Counters.Counter;
 
+    event BidClaimed(address indexed recipient, uint bidId);
+    event BidReclaimed(address indexed bidder, uint amount);
+    event FundsWithdrawn(address indexed account, uint amount);
     event NewBid(address indexed from, address indexed to, uint amount);
-    event ReclaimBid(address indexed bidder, uint amount);
 
     Counters.Counter private bidIds;
 
@@ -27,16 +29,29 @@ contract AckToEarn is Ownable, ReentrancyGuard {
 
     mapping(address => mapping(uint => Bid)) private bidderBids;
     mapping(address => mapping(uint => Bid)) private recipientBids;
+    mapping(address => uint) public balances;
+    mapping(address => uint) public minimumPaymentAmounts;
 
     Bid[] public bids;
 
     uint constant bidExpiryThreshold = 7 days;
+
+    /*
+    * ==================================================================================================================
+    *                                               BIDDER FUNCTIONS
+    * ==================================================================================================================
+    */
 
     /**
     * @notice Send a message and bid amount to a recipient
     */
     function sendBid(string memory message, address recipient) external payable {
         require(recipient != address(0), "Recipient cannot be the zero address");
+        require(
+            // If the recipient doesn't have a minimum payment set then the mapping returns 0
+            msg.value >= minimumPaymentAmounts[recipient],
+            "Ether value does not meet the recipient's minimum message amount"
+        );
 
         uint newBidId = bidIds.current();
         Bid memory bid = Bid({
@@ -49,7 +64,7 @@ contract AckToEarn is Ownable, ReentrancyGuard {
             timestamp: block.timestamp,
             claimed: false,
             exists: true
-        });
+            });
 
         bids.push(bid);
 
@@ -57,13 +72,6 @@ contract AckToEarn is Ownable, ReentrancyGuard {
         recipientBids[recipient][newBidId] = bid;
 
         emit NewBid(msg.sender, recipient, msg.value);
-    }
-
-    /**
-    * @notice Returns all bids that have ever been made on the platform
-    */
-    function getBids() external view returns(Bid[] memory) {
-        return bids;
     }
 
     /**
@@ -97,9 +105,65 @@ contract AckToEarn is Ownable, ReentrancyGuard {
 
         (bool success, ) = (msg.sender).call{value: totalReclaimAmount}("");
 
-        require(success, "Failed to send ether.");
+        require(success, "Failed to send ether");
 
-        emit ReclaimBid(msg.sender, totalReclaimAmount);
+        emit BidReclaimed(msg.sender, totalReclaimAmount);
+    }
+
+    /*
+    * ==================================================================================================================
+    *                                                  RECIPIENT FUNCTIONS
+    * ==================================================================================================================
+    */
+
+    /**
+    * @notice Allows a recipient to acknowledge a message / bid and adds the bid amount to their contract balance
+    */
+    function claimBid(uint bidId) public {
+        Bid memory bid = recipientBids[msg.sender][bidId];
+
+        require(bid.exists, "Bid not found");
+        require(!bid.claimed, "Bid balance has already been claimed");
+        require(!isBidExpired(bidId, msg.sender), "Bid is expired");
+
+        recipientBids[msg.sender][bidId].claimed = true;
+        balances[msg.sender] += bid.recipientAmount;
+
+        emit BidClaimed(msg.sender, bid.recipientAmount);
+    }
+
+    /**
+    * @notice Allows recipients to specify a minimum amount for messages
+    */
+    function setMinimumPaymentAmount(uint amount) external {
+        minimumPaymentAmounts[msg.sender] = amount;
+    }
+
+    /**
+    * @notice Allows funds to be withdrawn from the account's contract balance
+    */
+    function withdrawFunds(uint amount) external {
+        require(balances[msg.sender] >= amount, "Tried to withdraw more funds than the account's balance");
+
+        balances[msg.sender] -= amount;
+        (bool success, ) = (msg.sender).call{value: amount}("");
+
+        require(success, "Failed to withdraw funds");
+
+        emit FundsWithdrawn(msg.sender, amount);
+    }
+
+    /*
+    * ==================================================================================================================
+    *                                                   GENERAL FUNCTIONS
+    * ==================================================================================================================
+    */
+
+    /**
+    * @notice Returns all bids that have ever been made on the platform
+    */
+    function getBids() external view returns(Bid[] memory) {
+        return bids;
     }
 
     /**
