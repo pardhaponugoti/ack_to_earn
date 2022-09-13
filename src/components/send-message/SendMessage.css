@@ -1,7 +1,26 @@
-#onhoverresponse {
-  visibility: hidden;
+.img__wrap {
+  position: relative;
 }
 
-#onhoverresponse:hover {
+.img__img {
+  width: 13px;
+}
+
+.img__description {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(15, 16, 16, 0.72);
+  color: #fff;
+  visibility: hidden;
+  opacity: 0;
+  /* transition effect. not necessary */
+  transition: opacity 0.2s, visibility 0.5s;
+}
+
+.img__wrap:hover .img__description {
   visibility: visible;
+  opacity: 1;
 }
