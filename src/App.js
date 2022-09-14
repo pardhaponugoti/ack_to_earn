@@ -89,7 +89,12 @@ function App() {
           />
           <Route
             path={PAGE_ROUTE_YOUR_MESSAGES}
-            element={<YourMessagesPage />}
+            element={
+              <YourMessagesPage
+                walletProvider={walletProvider}
+                walletAddress={walletAddress}
+              />
+            }
           />
         </Route>
       </Routes>
