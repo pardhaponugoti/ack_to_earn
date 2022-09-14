@@ -22,7 +22,7 @@ contract AckToEarn is Ownable, ReentrancyGuard {
         uint timestamp;
         address bidder;
         address recipient;
-        string responseAddress;
+        string responseEmailAddress;
         string message;
         bool claimed;
         bool exists;
@@ -62,7 +62,7 @@ contract AckToEarn is Ownable, ReentrancyGuard {
             timestamp: block.timestamp,
             bidder: msg.sender,
             recipient: recipient,
-            responseAddress: responseAddress,
+            responseEmailAddress: responseAddress,
             message: message,
             claimed: false,
             exists: true
