@@ -11,7 +11,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 
 import HowItWorksPage from "./components/HowItWorksPage";
-import SendMessagePage from "./components/SendMessagePage";
+import SendMessagePage from "./components/send-message/SendMessage";
 import YourMessagesPage from "./components/YourMessagesPage";
 
 import {
