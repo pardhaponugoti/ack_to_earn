@@ -18,10 +18,11 @@ contract AckToEarn is Ownable, ReentrancyGuard {
 
     struct Bid {
         uint id;
-        address bidder;
-        address recipient;
         uint recipientAmount;
         uint timestamp;
+        address bidder;
+        address recipient;
+        string responseAddress;
         string message;
         bool claimed;
         bool exists;
@@ -45,7 +46,7 @@ contract AckToEarn is Ownable, ReentrancyGuard {
     /**
     * @notice Send a message and bid amount to a recipient
     */
-    function sendBid(string memory message, address recipient) external payable {
+    function sendBid(string memory message, address recipient, string memory responseAddress) external payable {
         require(recipient != address(0), "Recipient cannot be the zero address");
         require(
             // If the recipient doesn't have a minimum payment set then the mapping returns 0
@@ -56,15 +57,16 @@ contract AckToEarn is Ownable, ReentrancyGuard {
         uint newBidId = bidIds.current();
         Bid memory bid = Bid({
             id: newBidId,
-            bidder: msg.sender,
-            recipient: recipient,
             // The recipient gets 90% of the bid amount
             recipientAmount: (msg.value * 90) / 100,
-            message: message,
             timestamp: block.timestamp,
+            bidder: msg.sender,
+            recipient: recipient,
+            responseAddress: responseAddress,
+            message: message,
             claimed: false,
             exists: true
-            });
+        });
 
         bids.push(bid);
 
