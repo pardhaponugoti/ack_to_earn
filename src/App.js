@@ -22,12 +22,14 @@ import "./App.css";
 
 function App() {
   const [walletAddress, setWalletAddress] = useState(null);
+  const [walletProvider, setWalletProvider] = useState(null);
 
   const getWallet = async () => {
     const ethereum = await detectEthereumProvider();
     const provider = new ethers.providers.Web3Provider(ethereum, "any");
     await provider.send("eth_requestAccounts", []);
     const address = await provider.getSigner().getAddress();
+    setWalletProvider(provider);
     setWalletAddress(address);
   };
 
@@ -81,7 +83,10 @@ function App() {
       <Routes>
         <Route path="/">
           <Route index element={<HowItWorksPage />} />
-          <Route path={PAGE_ROUTE_SEND_MESSAGE} element={<SendMessagePage />} />
+          <Route
+            path={PAGE_ROUTE_SEND_MESSAGE}
+            element={<SendMessagePage walletProvider={walletProvider} />}
+          />
           <Route
             path={PAGE_ROUTE_YOUR_MESSAGES}
             element={<YourMessagesPage />}
