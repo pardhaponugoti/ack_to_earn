@@ -9,7 +9,6 @@ const YourMessagesPage = (props) => {
   useEffect(() => {
     const fetchMessages = async () => {
       const messages = await getMessages(walletProvider);
-      console.log("allMessages", messages);
       setAllMessages(messages);
     };
 
