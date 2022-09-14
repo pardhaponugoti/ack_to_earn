@@ -42,3 +42,14 @@ export const sendMessage = async (
     console.log("AckToEarn sendMessage transaction failed", err);
   }
 };
+
+export const getMessages = async (walletProvider) => {
+  const ackToEarnContract = getContract(walletProvider);
+
+  try {
+    const messages = await ackToEarnContract.getBids();
+    return messages;
+  } catch (err) {
+    console.log("AckToEarn getMessages transaction failed", err);
+  }
+};
