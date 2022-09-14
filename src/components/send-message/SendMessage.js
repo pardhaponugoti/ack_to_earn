@@ -1,15 +1,21 @@
 import React, { useState } from "react";
+
 import "./SendMessage.css";
+
 import question from "../../images/question.png";
-function SendMessage() {
+import { sendMessage } from "../../utils/Contract";
+
+function SendMessage(props) {
+  const { walletProvider } = props;
+
   const [recipientWallet, setRecipientWallet] = useState("");
   const [message, setMessage] = useState("");
   const [email, setEmail] = useState("");
   const [bidAmount, setBidAmount] = useState("");
 
-  const sendMessage = (e) => {
+  const send = (e) => {
     e.preventDefault();
-    console.log(" all", recipientWallet, message, email, bidAmount);
+    sendMessage(walletProvider, message, recipientWallet, email, bidAmount);
   };
 
   return (
@@ -71,7 +77,7 @@ function SendMessage() {
         <button
           type="submit"
           className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          onClick={sendMessage}
+          onClick={send}
         >
           Send Message
         </button>
