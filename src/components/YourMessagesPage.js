@@ -12,8 +12,11 @@ const YourMessagesPage = (props) => {
       setAllMessages(messages);
     };
 
-    fetchMessages();
-  });
+    if (walletProvider) {
+      // TODO: How do we fetch messages periodically?
+      fetchMessages();
+    }
+  }, [walletProvider]);
 
   const sentMessages = allMessages.filter(
     (message) => message.bidder === walletAddress
@@ -22,31 +25,45 @@ const YourMessagesPage = (props) => {
     (message) => message.recipient === walletAddress
   );
 
+  if (!walletProvider) {
+    return (
+      <div className="text-center text-2xl">Please connect your wallet</div>
+    );
+  }
+
+  const formatMessage = (message) => {
+    return (
+      <div className="py-3">
+        <div>{`Recipient: ${message.recipient}`}</div>
+        <div>{`Bidder: ${message.bidder}`}</div>
+        <div>{`Message: ${message.message}`}</div>
+        <div>{`Email: ${message.responseEmailAddress}`}</div>
+        {message.fileCid && (
+          <div>
+            File:{" "}
+            <a
+              target="_blank"
+              href={`https://dweb.link/ipfs/${message.fileCid}`}
+              rel="noreferrer"
+              className="text-blue-700 underline"
+            >
+              Link
+            </a>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div>
       <div className="text-center text-2xl">Your Messages!</div>
       <div className="text-xl">Received</div>
-      {receivedMessages.map((receivedMessage) => {
-        return (
-          <div className="py-3">
-            <div>{`Recipient: ${receivedMessage.recipient}`}</div>
-            <div>{`Bidder: ${receivedMessage.bidder}`}</div>
-            <div>{`Message: ${receivedMessage.message}`}</div>
-            <div>{`Email: ${receivedMessage.responseEmailAddress}`}</div>
-          </div>
-        );
-      })}
+      {receivedMessages.map((receivedMessage) =>
+        formatMessage(receivedMessage)
+      )}
       <div className="text-xl">Sent</div>
-      {sentMessages.map((sentMessage) => {
-        return (
-          <div className="py-3">
-            <div>{`Recipient: ${sentMessage.recipient}`}</div>
-            <div>{`Bidder: ${sentMessage.bidder}`}</div>
-            <div>{`Message: ${sentMessage.message}`}</div>
-            <div>{`Email: ${sentMessage.responseEmailAddress}`}</div>
-          </div>
-        );
-      })}
+      {sentMessages.map((sentMessage) => formatMessage(sentMessage))}
     </div>
   );
 };

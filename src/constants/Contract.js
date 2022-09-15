@@ -1,5 +1,5 @@
 export const ACK_TO_EARN_CONTRACT_ADDRESS =
-  "0x60cC3ccF411d450d1254078165844BFc053299FA";
+  "0xB997083991913d7617Cc14295b6e035F1802AfdB";
 
 export const ACK_TO_EARN_ABI = [
   {
@@ -168,6 +168,11 @@ export const ACK_TO_EARN_ABI = [
         type: "string",
       },
       {
+        internalType: "string",
+        name: "fileCid",
+        type: "string",
+      },
+      {
         internalType: "bool",
         name: "claimed",
         type: "bool",
@@ -233,6 +238,11 @@ export const ACK_TO_EARN_ABI = [
           {
             internalType: "string",
             name: "message",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "fileCid",
             type: "string",
           },
           {
@@ -321,6 +331,11 @@ export const ACK_TO_EARN_ABI = [
       {
         internalType: "string",
         name: "responseAddress",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "fileCid",
         type: "string",
       },
     ],

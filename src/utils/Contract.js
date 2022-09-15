@@ -24,6 +24,7 @@ export const sendMessage = async (
   message,
   recipient,
   responseEmailAddress,
+  fileCid,
   amount
 ) => {
   const ackToEarnContract = getContract(walletProvider);
@@ -33,6 +34,7 @@ export const sendMessage = async (
       message,
       recipient,
       responseEmailAddress,
+      fileCid,
       { value: ethers.utils.parseEther(amount.toString()) }
     );
     const returnValue = await transaction.wait();

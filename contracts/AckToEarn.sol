@@ -24,6 +24,7 @@ contract AckToEarn is Ownable, ReentrancyGuard {
         address recipient;
         string responseEmailAddress;
         string message;
+        string fileCid;
         bool claimed;
         bool exists;
     }
@@ -46,7 +47,7 @@ contract AckToEarn is Ownable, ReentrancyGuard {
     /**
     * @notice Send a message and bid amount to a recipient
     */
-    function sendBid(string memory message, address recipient, string memory responseAddress) external payable {
+    function sendBid(string memory message, address recipient, string memory responseAddress, string memory fileCid) external payable {
         require(recipient != address(0), "Recipient cannot be the zero address");
         require(
             // If the recipient doesn't have a minimum payment set then the mapping returns 0
@@ -64,6 +65,7 @@ contract AckToEarn is Ownable, ReentrancyGuard {
             recipient: recipient,
             responseEmailAddress: responseAddress,
             message: message,
+            fileCid: fileCid,
             claimed: false,
             exists: true
         });
