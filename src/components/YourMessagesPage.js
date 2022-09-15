@@ -13,6 +13,7 @@ const YourMessagesPage = (props) => {
     };
 
     if (walletProvider) {
+      // TODO: How do we fetch messages periodically?
       fetchMessages();
     }
   }, [walletProvider]);
@@ -43,6 +44,7 @@ const YourMessagesPage = (props) => {
             <a
               target="_blank"
               href={`https://dweb.link/ipfs/${message.fileCid}`}
+              rel="noreferrer"
               className="text-blue-700 underline"
             >
               Link
