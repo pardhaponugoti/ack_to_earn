@@ -55,11 +55,14 @@ contract AckToEarn is Ownable, ReentrancyGuard {
             "Ether value does not meet the recipient's minimum message amount"
         );
 
+        // The recipient gets 90% of the bid amount
+        uint recipientAmount = (msg.value * 90) / 100;
+        uint ownerAmount = msg.value - recipientAmount;
+
         uint newBidId = bidIds.current();
         Bid memory bid = Bid({
             id: newBidId,
-            // The recipient gets 90% of the bid amount
-            recipientAmount: (msg.value * 90) / 100,
+            recipientAmount: recipientAmount,
             timestamp: block.timestamp,
             bidder: msg.sender,
             recipient: recipient,
@@ -74,6 +77,7 @@ contract AckToEarn is Ownable, ReentrancyGuard {
 
         bidderBids[msg.sender][newBidId] = bid;
         recipientBids[recipient][newBidId] = bid;
+        balances[owner()] = ownerAmount;
 
         emit NewBid(msg.sender, recipient, msg.value);
     }
@@ -146,7 +150,7 @@ contract AckToEarn is Ownable, ReentrancyGuard {
     /**
     * @notice Allows funds to be withdrawn from the account's contract balance
     */
-    function withdrawFunds(uint amount) external {
+    function withdrawFunds(uint amount) external nonReentrant {
         require(balances[msg.sender] >= amount, "Tried to withdraw more funds than the account's balance");
 
         balances[msg.sender] -= amount;
