@@ -42,12 +42,14 @@ function SendMessage(props) {
       bidAmount
     );
 
-    if (sendMessageResult.status === 1) {
+    if (sendMessageResult && sendMessageResult.status === 1) {
       setRecipientWallet("");
       setMessage("");
       setEmail("");
       setBidAmount("");
       setAttachedFile(null);
+
+      // TODO: add success state
     } else {
       // TODO: set error state with descriptive error message
     }
