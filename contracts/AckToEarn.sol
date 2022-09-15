@@ -77,7 +77,7 @@ contract AckToEarn is Ownable, ReentrancyGuard {
 
         bidderBids[msg.sender][newBidId] = bid;
         recipientBids[recipient][newBidId] = bid;
-        balances[owner()] = ownerAmount;
+        balances[owner()] += ownerAmount;
 
         emit NewBid(msg.sender, recipient, msg.value);
     }
