@@ -15,18 +15,39 @@ function SendMessage(props) {
   const [bidAmount, setBidAmount] = useState("");
   const [attachedFile, setAttachedFile] = useState(null);
 
-  console.log("attachedFile", attachedFile);
+  const storageClient = getStorageClient();
 
   const send = async (e) => {
+    let fileCid = "";
+
     e.preventDefault();
+    if (attachedFile) {
+      const fileInput = document.querySelector('input[type="file"]');
+      const rootCid = await storageClient.put(fileInput.files);
+      const info = await storageClient.status(rootCid);
+      fileCid = info.cid;
+    }
+
+    // TODO: set loading state
+
     const sendMessageResult = await sendMessage(
       walletProvider,
       message,
       recipientWallet,
       email,
+      fileCid,
       bidAmount
     );
-    console.log("sendMessageResult", sendMessageResult);
+
+    if (sendMessageResult.status === 1) {
+      setRecipientWallet("");
+      setMessage("");
+      setEmail("");
+      setBidAmount("");
+      setAttachedFile(null);
+    } else {
+      // TODO: set error state with descriptive error message
+    }
   };
 
   return (
@@ -55,11 +76,11 @@ function SendMessage(props) {
 
         <label className="block">
           <div className="img__wrap flex">
-            <span className="text-gray-700">Response address </span>
+            <span className="text-gray-700">Email address </span>
             <div>
               <img className="img__img" src={question} alt="question" />
               <p className="img__description">
-                How recipient can get in touch with you.
+                The email the recipient can get in touch with you at.
               </p>
             </div>
           </div>
@@ -87,21 +108,13 @@ function SendMessage(props) {
 
         <label className="block">
           <span className="text-gray-700">Attach a file (optional)</span>
-          {attachedFile ? (
-            <div className="shadow-sm bg-gray-50 border  border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-ligh">
-              {attachedFile.name}
-            </div>
-          ) : (
-            <input
-              type="file"
-              className="shadow-sm bg-gray-50 border  border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-ligh"
-              onChange={(e) => {
-                console.log(e);
-                setAttachedFile(e.target.files[0]);
-              }}
-              value={attachedFile && attachedFile.name}
-            />
-          )}
+          <input
+            type="file"
+            className="shadow-sm bg-gray-50 border  border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-ligh"
+            onChange={(e) => {
+              setAttachedFile(e.target.files[0]);
+            }}
+          />
         </label>
 
         <button
