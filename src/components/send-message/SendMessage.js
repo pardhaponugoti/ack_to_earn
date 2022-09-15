@@ -48,10 +48,11 @@ function SendMessage(props) {
       setEmail("");
       setBidAmount("");
       setAttachedFile(null);
-      setIsLoading(false);
     } else {
       // TODO: set error state with descriptive error message
     }
+
+    setIsLoading(false);
   };
 
   if (!walletProvider) {
@@ -63,9 +64,9 @@ function SendMessage(props) {
   return (
     <div className="mt-8 max-w-md mx-auto w-1/2 border-solid border-2 p-16 box-shadow: 0 0 24px rgba(0, 0, 0, 0.1)">
       {isLoading && (
-        <span className="text-center float-right relative top-48 right-40">
+        <div className="text-center absolute top-[50%] right-[49%]">
           <CircularProgress />
-        </span>
+        </div>
       )}
       <div className="grid grid-cols-1 gap-6">
         <label className="block">
