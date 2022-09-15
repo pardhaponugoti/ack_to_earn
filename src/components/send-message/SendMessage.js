@@ -50,6 +50,12 @@ function SendMessage(props) {
     }
   };
 
+  if (!walletProvider) {
+    return (
+      <div className="text-center text-2xl">Please connect your wallet</div>
+    );
+  }
+
   return (
     <div className="mt-8 max-w-md mx-auto w-1/2 border-solid border-2  p-16 box-shadow: 0 0 24px rgba(0, 0, 0, 0.1)">
       <div className="grid grid-cols-1 gap-6">
