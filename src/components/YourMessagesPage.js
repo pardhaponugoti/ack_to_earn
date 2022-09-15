@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { getMessages } from "../utils/Contract";
 
-// https://dweb.link/ipfs/YOUR_CID
-
 const YourMessagesPage = (props) => {
   const { walletProvider, walletAddress } = props;
 

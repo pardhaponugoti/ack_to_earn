@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+import CircularProgress from "@mui/material/CircularProgress";
+
 import "./SendMessage.css";
 
 import question from "../../images/question.png";
@@ -14,6 +16,7 @@ function SendMessage(props) {
   const [email, setEmail] = useState("");
   const [bidAmount, setBidAmount] = useState("");
   const [attachedFile, setAttachedFile] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const storageClient = getStorageClient();
 
@@ -28,7 +31,7 @@ function SendMessage(props) {
       fileCid = info.cid;
     }
 
-    // TODO: set loading state
+    setIsLoading(true);
 
     const sendMessageResult = await sendMessage(
       walletProvider,
@@ -45,6 +48,7 @@ function SendMessage(props) {
       setEmail("");
       setBidAmount("");
       setAttachedFile(null);
+      setIsLoading(false);
     } else {
       // TODO: set error state with descriptive error message
     }
@@ -57,7 +61,12 @@ function SendMessage(props) {
   }
 
   return (
-    <div className="mt-8 max-w-md mx-auto w-1/2 border-solid border-2  p-16 box-shadow: 0 0 24px rgba(0, 0, 0, 0.1)">
+    <div className="mt-8 max-w-md mx-auto w-1/2 border-solid border-2 p-16 box-shadow: 0 0 24px rgba(0, 0, 0, 0.1)">
+      {isLoading && (
+        <span className="text-center float-right relative top-48 right-40">
+          <CircularProgress />
+        </span>
+      )}
       <div className="grid grid-cols-1 gap-6">
         <label className="block">
           <span className="text-gray-700">Recipient's wallet address</span>
@@ -67,6 +76,7 @@ function SendMessage(props) {
             placeholder="0x11..A31"
             onChange={(e) => setRecipientWallet(e.target.value)}
             value={recipientWallet}
+            disabled={isLoading}
           />
         </label>
         <label className="block">
@@ -77,6 +87,7 @@ function SendMessage(props) {
             onChange={(e) => setMessage(e.target.value)}
             value={message}
             placeholder="your message..."
+            disabled={isLoading}
           />
         </label>
 
@@ -98,6 +109,7 @@ function SendMessage(props) {
             onChange={(e) => setEmail(e.target.value)}
             id="exampleEmail0"
             value={email}
+            disabled={isLoading}
           />
         </label>
 
@@ -109,6 +121,7 @@ function SendMessage(props) {
             placeholder="1"
             onChange={(e) => setBidAmount(e.target.value)}
             value={bidAmount}
+            disabled={isLoading}
           />
         </label>
 
@@ -120,6 +133,7 @@ function SendMessage(props) {
             onChange={(e) => {
               setAttachedFile(e.target.files[0]);
             }}
+            disabled={isLoading}
           />
         </label>
 
@@ -127,6 +141,7 @@ function SendMessage(props) {
           type="submit"
           className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           onClick={send}
+          disabled={isLoading}
         >
           Send Message
         </button>
