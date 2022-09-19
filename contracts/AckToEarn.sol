@@ -9,17 +9,17 @@ import "hardhat/console.sol";
 contract AckToEarn is Ownable, ReentrancyGuard {
     using Counters for Counters.Counter;
 
-    event BidClaimed(address indexed recipient, uint bidId);
-    event BidReclaimed(address indexed bidder, uint amount);
-    event FundsWithdrawn(address indexed account, uint amount);
-    event NewBid(address indexed from, address indexed to, uint amount);
+    event BidClaimed(address indexed recipient, uint256 bidId);
+    event BidReclaimed(address indexed bidder, uint256 amount);
+    event FundsWithdrawn(address indexed account, uint256 amount);
+    event NewBid(address indexed from, address indexed to, uint256 amount);
 
     Counters.Counter private bidIds;
 
     struct Bid {
-        uint id;
-        uint recipientAmount;
-        uint timestamp;
+        uint256 id;
+        uint256 recipientAmount;
+        uint256 timestamp;
         address bidder;
         address recipient;
         string responseEmailAddress;
@@ -29,26 +29,34 @@ contract AckToEarn is Ownable, ReentrancyGuard {
         bool exists;
     }
 
-    mapping(address => mapping(uint => Bid)) private bidderBids;
-    mapping(address => mapping(uint => Bid)) private recipientBids;
-    mapping(address => uint) public balances;
-    mapping(address => uint) public minimumPaymentAmounts;
+    mapping(address => mapping(uint256 => Bid)) private bidderBids;
+    mapping(address => mapping(uint256 => Bid)) private recipientBids;
+    mapping(address => uint256) public balances;
+    mapping(address => uint256) public minimumPaymentAmounts;
 
     Bid[] public bids;
 
-    uint constant bidExpiryThreshold = 7 days;
+    uint256 constant bidExpiryThreshold = 7 days;
 
     /*
-    * ==================================================================================================================
-    *                                               BIDDER FUNCTIONS
-    * ==================================================================================================================
-    */
+     * ==================================================================================================================
+     *                                               BIDDER FUNCTIONS
+     * ==================================================================================================================
+     */
 
     /**
-    * @notice Send a message and bid amount to a recipient
-    */
-    function sendBid(string memory message, address recipient, string memory responseAddress, string memory fileCid) external payable {
-        require(recipient != address(0), "Recipient cannot be the zero address");
+     * @notice Send a message and bid amount to a recipient
+     */
+    function sendBid(
+        string memory message,
+        address recipient,
+        string memory responseAddress,
+        string memory fileCid
+    ) external payable {
+        require(
+            recipient != address(0),
+            "Recipient cannot be the zero address"
+        );
         require(
             // If the recipient doesn't have a minimum payment set then the mapping returns 0
             msg.value >= minimumPaymentAmounts[recipient],
@@ -56,10 +64,11 @@ contract AckToEarn is Ownable, ReentrancyGuard {
         );
 
         // The recipient gets 90% of the bid amount
-        uint recipientAmount = (msg.value * 90) / 100;
-        uint ownerAmount = msg.value - recipientAmount;
+        uint256 recipientAmount = (msg.value * 90) / 100;
+        uint256 ownerAmount = msg.value - recipientAmount;
 
-        uint newBidId = bidIds.current();
+        bidIds.increment();
+        uint256 newBidId = bidIds.current();
         Bid memory bid = Bid({
             id: newBidId,
             recipientAmount: recipientAmount,
@@ -83,14 +92,16 @@ contract AckToEarn is Ownable, ReentrancyGuard {
     }
 
     /**
-    * @notice Reclaims a specific set of expired bids that the bidder has made.
-    */
-    function reclaimBids(uint[] memory bidIdsToReclaim) external nonReentrant {
-        uint totalReclaimAmount = 0;
+     * @notice Reclaims a specific set of expired bids that the bidder has made.
+     */
+    function reclaimBids(uint256[] memory bidIdsToReclaim)
+        external
+        nonReentrant
+    {
+        uint256 totalReclaimAmount = 0;
 
-        for (uint i = 0; i < bidIdsToReclaim.length; i++)
-        {
-            uint bidId = bidIdsToReclaim[i];
+        for (uint256 i = 0; i < bidIdsToReclaim.length; i++) {
+            uint256 bidId = bidIdsToReclaim[i];
             Bid memory bid = bidderBids[msg.sender][bidId];
 
             if (!bid.exists) {
@@ -119,15 +130,15 @@ contract AckToEarn is Ownable, ReentrancyGuard {
     }
 
     /*
-    * ==================================================================================================================
-    *                                                  RECIPIENT FUNCTIONS
-    * ==================================================================================================================
-    */
+     * ==================================================================================================================
+     *                                                  RECIPIENT FUNCTIONS
+     * ==================================================================================================================
+     */
 
     /**
-    * @notice Allows a recipient to acknowledge a message / bid and adds the bid amount to their contract balance
-    */
-    function claimBid(uint bidId) public {
+     * @notice Allows a recipient to acknowledge a message / bid and adds the bid amount to their contract balance
+     */
+    function claimBid(uint256 bidId) public {
         Bid memory bid = recipientBids[msg.sender][bidId];
 
         require(bid.exists, "Bid not found");
@@ -141,17 +152,20 @@ contract AckToEarn is Ownable, ReentrancyGuard {
     }
 
     /**
-    * @notice Allows recipients to specify a minimum amount for messages
-    */
-    function setMinimumPaymentAmount(uint amount) external {
+     * @notice Allows recipients to specify a minimum amount for messages
+     */
+    function setMinimumPaymentAmount(uint256 amount) external {
         minimumPaymentAmounts[msg.sender] = amount;
     }
 
     /**
-    * @notice Allows funds to be withdrawn from the account's contract balance
-    */
-    function withdrawFunds(uint amount) external nonReentrant {
-        require(balances[msg.sender] >= amount, "Tried to withdraw more funds than the account's balance");
+     * @notice Allows funds to be withdrawn from the account's contract balance
+     */
+    function withdrawFunds(uint256 amount) external nonReentrant {
+        require(
+            balances[msg.sender] >= amount,
+            "Tried to withdraw more funds than the account's balance"
+        );
 
         balances[msg.sender] -= amount;
         (bool success, ) = (msg.sender).call{value: amount}("");
@@ -162,31 +176,37 @@ contract AckToEarn is Ownable, ReentrancyGuard {
     }
 
     /*
-    * ==================================================================================================================
-    *                                                   GENERAL FUNCTIONS
-    * ==================================================================================================================
-    */
+     * ==================================================================================================================
+     *                                                   GENERAL FUNCTIONS
+     * ==================================================================================================================
+     */
 
     /**
-    * @notice Returns all bids that have ever been made on the platform
-    */
-    function getBids() external view returns(Bid[] memory) {
+     * @notice Returns all bids that have ever been made on the platform
+     */
+    function getBids() external view returns (Bid[] memory) {
         return bids;
     }
 
     /**
-    * @notice Check if bid is expired
-    * @dev Returns true if the bid cannot be found
-    */
-    function isBidExpired(uint bidId, address account) internal view returns(bool) {
+     * @notice Check if bid is expired
+     * @dev Returns true if the bid cannot be found
+     */
+    function isBidExpired(uint256 bidId, address account)
+        internal
+        view
+        returns (bool)
+    {
         bool isBidderAccount = bidderBids[account][bidId].exists;
         bool isRecipientAccount = recipientBids[account][bidId].exists;
 
         if (isBidderAccount) {
-            return (block.timestamp >= (bidderBids[account][bidId].timestamp + bidExpiryThreshold));
+            return (block.timestamp >=
+                (bidderBids[account][bidId].timestamp + bidExpiryThreshold));
         }
         if (isRecipientAccount) {
-            return (block.timestamp >= (recipientBids[account][bidId].timestamp + bidExpiryThreshold));
+            return (block.timestamp >=
+                (recipientBids[account][bidId].timestamp + bidExpiryThreshold));
         }
 
         return true;
