@@ -5,7 +5,7 @@ import download from "../images/download.png";
 import Moment from "react-moment";
 
 function SelectedMessage(props) {
-  const { walletProvider, walletAddress, selectedMessage } = props;
+  const { walletProvider, selectedMessage } = props;
   const [deadline, setDeadline] = useState("1");
 
   useEffect(() => {
@@ -13,7 +13,6 @@ function SelectedMessage(props) {
       let timeStamp = selectedMessage?.timestamp.toString();
       // converts it to milliseconds
       timeStamp = timeStamp * 1000;
-
       // convert it to day, then add 7 days
       let deadlineDay = new Date(timeStamp);
       deadlineDay.setHours(deadlineDay.getHours() + 168);
@@ -31,8 +30,9 @@ function SelectedMessage(props) {
   }, [selectedMessage]);
 
   const claimBalance = async (messageId) => {
-    // const balance = await getClaimBalance(walletProvider, messageId);
-    // console.log("new  balance", balance);
+    console.log("messageId", messageId.toString());
+    // const balance = await getClaimBalance(walletProvider, messageId.toString());
+    // // console.log("new  balance", balance);
   };
 
   return (

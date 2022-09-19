@@ -98,20 +98,29 @@ const YourMessagesPage = (props) => {
       const sent = messages.filter(
         (message) => message.bidder === walletAddress
       );
-      setSentMessagesBalance(getSentMessagesBalance(sent));
       setSendMessages(sent);
       const received = messages.filter(
         (message) => message.recipient === walletAddress
       );
-      setReceivedMessagesBalance(getReceivedMessagesBalance(received));
+
       setReceivedMessages(received);
+      getMessagesBalance("sent", sent);
+      getMessagesBalance("received", received);
     };
     fetchMessages();
   }, []);
 
-  const getSentMessagesBalance = async () => {};
-
-  const getReceivedMessagesBalance = async () => {};
+  const getMessagesBalance = async (listType, listArray) => {
+    let balance = 0;
+    for (let i = 0; i < listArray.length; i++) {
+      const currentBalance = listArray[i].recipientAmount.toString() / 10 ** 18;
+      balance += +currentBalance;
+    }
+    if (listType === "sent") setSentMessagesBalance(balance);
+    else {
+      setReceivedMessagesBalance(balance);
+    }
+  };
 
   return (
     <div className=" pt-4">
