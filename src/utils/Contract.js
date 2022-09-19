@@ -69,6 +69,7 @@ export const getClaimBalance = async (walletProvider, messageId) => {
 
 export const getBalance = async (walletProvider, walletAddress) => {
   const ackToEarnContract = getContract(walletProvider);
+
   try {
     const balance = await ackToEarnContract.balances(walletAddress);
     return balance.toNumber();
