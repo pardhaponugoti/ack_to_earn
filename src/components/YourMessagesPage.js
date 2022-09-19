@@ -8,7 +8,12 @@ import Filters from "./Filters";
 import MessageTools from "./MessageTools";
 
 const YourMessagesPage = (props) => {
-  const { walletProvider, walletAddress } = props;
+  const {
+    walletProvider,
+    walletAddress,
+    setReceivedMessagesBalance,
+    setSentMessagesBalance,
+  } = props;
   const [selectedMessage, setSelectedMessage] = useState("");
   const [allMessages, setAllMessages] = useState([]);
   const [receivedMessages, setReceivedMessages] = useState([]);
@@ -33,102 +38,57 @@ const YourMessagesPage = (props) => {
     setFilterCategory(filterBy);
 
     if (activeLink === "Inbox") {
-      console.log("receivedMessageArray", receivedMessageArray);
       if (filterBy === "All") {
         setData(receivedMessageArray);
       } else if (filterBy === "Active") {
-        const result = receivedMessageArray.filter((message) => {
-          let timeStamp = message.timestamp.toString();
-          // converts it to milliseconds
-          timeStamp = timeStamp * 1000;
-
-          // convert it to day, then add 7 days
-          let deadlineDay = new Date(timeStamp);
-          deadlineDay.setHours(deadlineDay.getHours() + 168);
-
-          const date1 = new Date(deadlineDay);
-          const date2 = new Date();
-          const remainder = (date1 - date2) / 1000 / 60 / 60 / 24;
-          return remainder > 0;
-        });
-
-        setData(result);
+        setData(getActiveMessages(receivedMessageArray));
       } else if (filterBy === "Claimed") {
-        const result = receivedMessageArray.filter(
-          (message) => message.claimed === true
-        );
-        console.log("should not dispplay res", result);
-        setData(result);
+        setData(getClaimedMessages(receivedMessageArray));
       } else if (filterBy === "Expired") {
-        const result = receivedMessageArray.filter((message) => {
-          let timeStamp = message.timestamp.toString();
-          // converts it to milliseconds
-          timeStamp = timeStamp * 1000;
-
-          // convert it to day, then add 7 days
-          let deadlineDay = new Date(timeStamp);
-          deadlineDay.setHours(deadlineDay.getHours() + 168);
-
-          const date1 = new Date(deadlineDay);
-          const date2 = new Date();
-          const remainder = (date1 - date2) / 1000 / 60 / 60 / 24;
-          console.log(
-            "🚀 ~ file: YourMessagesPage.js ~ line 78 ~ result ~ remainder",
-            remainder
-          );
-          return remainder < 0;
-        });
-        setData(result);
+        setData(getExpiredMessages(receivedMessageArray));
       }
     } else {
-      // FOR SENT MESSAGE
-      console.log("sentMessagesArray", sentMessagesArray);
+      // SENT MESSAGE
       if (filterBy === "All") {
         setData(sentMessagesArray);
       } else if (filterBy === "Active") {
-        const result = sentMessagesArray.filter((message) => {
-          let timeStamp = message.timestamp.toString();
-          // converts it to milliseconds
-          timeStamp = timeStamp * 1000;
-
-          // convert it to day, then add 7 days
-          let deadlineDay = new Date(timeStamp);
-          deadlineDay.setHours(deadlineDay.getHours() + 168);
-
-          const date1 = new Date(deadlineDay);
-          const date2 = new Date();
-          const remainder = (date1 - date2) / 1000 / 60 / 60 / 24;
-          return remainder > 0;
-        });
-
-        setData(result);
+        setData(getActiveMessages(sentMessagesArray));
       } else if (filterBy === "Claimed") {
-        const result = sentMessagesArray.filter(
-          (message) => message.claimed === true
-        );
-        console.log("should not dispplayres", result);
-        setData(result);
-      }
-
-      // come back to this
-      else if (filterBy === "Expired") {
-        const result = sentMessagesArray.filter((message) => {
-          let timeStamp = message.timestamp.toString();
-          // converts it to milliseconds
-          timeStamp = timeStamp * 1000;
-
-          // convert it to day, then add 7 days
-          let deadlineDay = new Date(timeStamp);
-          deadlineDay.setHours(deadlineDay.getHours() + 168);
-
-          const date1 = new Date(deadlineDay);
-          const date2 = new Date();
-          const remainder = (date1 - date2) / 1000 / 60 / 60 / 24;
-          return remainder < 0;
-        });
-        setData(result);
+        setData(getClaimedMessages(sentMessagesArray));
+      } else if (filterBy === "Expired") {
+        setData(getExpiredMessages(sentMessagesArray));
       }
     }
+  };
+
+  const getActiveMessages = (listArray) => {
+    return listArray.filter((message) => {
+      let timeStamp = message.timestamp.toString();
+      timeStamp = timeStamp * 1000;
+      let deadlineDay = new Date(timeStamp);
+      deadlineDay.setHours(deadlineDay.getHours() + 168);
+      const date1 = new Date(deadlineDay);
+      const date2 = new Date();
+      const remainder = (date1 - date2) / 1000 / 60 / 60 / 24;
+      return remainder > 0;
+    });
+  };
+
+  const getClaimedMessages = (listArray) => {
+    return listArray.filter((message) => message.claimed === true);
+  };
+
+  const getExpiredMessages = (listArray) => {
+    return listArray.filter((message) => {
+      let timeStamp = message.timestamp.toString();
+      timeStamp = timeStamp * 1000; //converts it to milliseconds
+      let deadlineDay = new Date(timeStamp);
+      deadlineDay.setHours(deadlineDay.getHours() + 168); // add 7 days
+      const date1 = new Date(deadlineDay);
+      const date2 = new Date();
+      const remainder = (date1 - date2) / 1000 / 60 / 60 / 24;
+      return remainder < 0;
+    });
   };
 
   useEffect(() => {
@@ -138,14 +98,20 @@ const YourMessagesPage = (props) => {
       const sent = messages.filter(
         (message) => message.bidder === walletAddress
       );
+      setSentMessagesBalance(getSentMessagesBalance(sent));
       setSendMessages(sent);
       const received = messages.filter(
         (message) => message.recipient === walletAddress
       );
+      setReceivedMessagesBalance(getReceivedMessagesBalance(received));
       setReceivedMessages(received);
     };
     fetchMessages();
   }, []);
+
+  const getSentMessagesBalance = async () => {};
+
+  const getReceivedMessagesBalance = async () => {};
 
   return (
     <div className=" pt-4">
@@ -178,34 +144,13 @@ const YourMessagesPage = (props) => {
           />
         </Grid>
         <Grid item xs={7}>
-          <SelectedMessage selectedMessage={selectedMessage} />
+          <SelectedMessage
+            selectedMessage={selectedMessage}
+            walletProvider={walletProvider}
+            walletAddress={walletAddress}
+          />
         </Grid>
       </Grid>
-
-      {/* old */}
-      <div className="text-center text-2xl">Your Messages!</div>
-      <div className="text-xl">Received</div>
-      {/* {receivedMessages.map((receivedMessage) => {
-        return (
-          <div className="py-3">
-            <div>{`Recipient: ${receivedMessage.recipient}`}</div>
-            <div>{`Bidder: ${receivedMessage.bidder}`}</div>
-            <div>{`Message: ${receivedMessage.message}`}</div>
-            <div>{`Email: ${receivedMessage.responseEmailAddress}`}</div>
-          </div>
-        );
-      })}
-      <div className="text-xl">Sent</div>
-      {sentMessages.map((sentMessage) => {
-        return (
-          <div className="py-3">
-            <div>{`Recipient: ${sentMessage.recipient}`}</div>
-            <div>{`Bidder: ${sentMessage.bidder}`}</div>
-            <div>{`Message: ${sentMessage.message}`}</div>
-            <div>{`Email: ${sentMessage.responseEmailAddress}`}</div>
-          </div>
-        );
-      })} */}
     </div>
   );
 };

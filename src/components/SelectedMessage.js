@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
+import { getClaimBalance } from "../utils/Contract";
 import { Button, CardContent, Typography } from "@mui/material";
 import download from "../images/download.png";
 import Moment from "react-moment";
 
 function SelectedMessage(props) {
-  const { selectedMessage } = props;
+  const { walletProvider, walletAddress, selectedMessage } = props;
   const [deadline, setDeadline] = useState("1");
 
   useEffect(() => {
@@ -30,6 +31,13 @@ function SelectedMessage(props) {
     }
     // eslint-disable-next-line no-use-before-define
   }, [selectedMessage]);
+
+  const claimBalance = async (messageId) => {
+    console.log("messageId", messageId);
+    console.log("Convert", messageId.toString());
+    // const balance = await getClaimBalance(walletProvider, messageId);
+    // console.log("what is my new  balance", balance);
+  };
 
   return (
     <div>
@@ -86,7 +94,11 @@ function SelectedMessage(props) {
             </Typography>
             <br />
 
-            <Button variant="contained" color="primary">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => claimBalance(selectedMessage.id)}
+            >
               Acknowledge this message
             </Button>
           </CardContent>

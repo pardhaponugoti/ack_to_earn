@@ -25,6 +25,8 @@ import "./App.css";
 function App() {
   const [walletAddress, setWalletAddress] = useState(null);
   const [walletProvider, setWalletProvider] = useState(null);
+  const [receivedMessagesBalance, setReceivedMessagesBalance] = useState(0);
+  const [sentMessagesBalance, setSentMessagesBalance] = useState(0);
 
   const getWallet = async () => {
     const ethereum = await detectEthereumProvider();
@@ -100,6 +102,8 @@ function App() {
               <YourMessagesPage
                 walletProvider={walletProvider}
                 walletAddress={walletAddress}
+                setReceivedMessagesBalance={setReceivedMessagesBalance}
+                setSentMessagesBalance={setSentMessagesBalance}
               />
             }
           />
@@ -109,6 +113,8 @@ function App() {
               <Balance
                 walletProvider={walletProvider}
                 walletAddress={walletAddress}
+                receivedMessagesBalance={receivedMessagesBalance}
+                sentMessagesBalance={sentMessagesBalance}
               />
             }
           />
