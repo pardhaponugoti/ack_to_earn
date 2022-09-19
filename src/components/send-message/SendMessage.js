@@ -1,7 +1,11 @@
 import React, { useState } from "react";
+
+import CircularProgress from "@mui/material/CircularProgress";
+
 import "./SendMessage.css";
 import question from "../../images/question.png";
 import { sendMessage } from "../../utils/Contract";
+import { getStorageClient } from "../../utils/FileStorage";
 
 function SendMessage(props) {
   const { walletProvider } = props;
@@ -9,15 +13,62 @@ function SendMessage(props) {
   const [message, setMessage] = useState("");
   const [email, setEmail] = useState("");
   const [bidAmount, setBidAmount] = useState("");
+  const [attachedFile, setAttachedFile] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const send = (e) => {
+  const storageClient = getStorageClient();
+
+  const send = async (e) => {
+    let fileCid = "";
+
     e.preventDefault();
-    sendMessage(walletProvider, message, recipientWallet, email, bidAmount);
+    if (attachedFile) {
+      const fileInput = document.querySelector('input[type="file"]');
+      const rootCid = await storageClient.put(fileInput.files);
+      const info = await storageClient.status(rootCid);
+      fileCid = info.cid;
+    }
+
+    setIsLoading(true);
+
+    const sendMessageResult = await sendMessage(
+      walletProvider,
+      message,
+      recipientWallet,
+      email,
+      fileCid,
+      bidAmount
+    );
+
+    if (sendMessageResult && sendMessageResult.status === 1) {
+      setRecipientWallet("");
+      setMessage("");
+      setEmail("");
+      setBidAmount("");
+      setAttachedFile(null);
+
+      // TODO: add success state
+    } else {
+      // TODO: set error state with descriptive error message
+    }
+
+    setIsLoading(false);
   };
+
+  if (!walletProvider) {
+    return (
+      <div className="text-center text-2xl">Please connect your wallet</div>
+    );
+  }
 
   return (
     <div className="bg-blue-100 h-screen pt-4">
       <div className="mt-8 max-w-md mx-auto w-1/2 border-solid border-2  p-16 box-shadow: 0 0 24px rgba(0, 0, 0, 0.1)  bg-white">
+        {isLoading && (
+          <div className="text-center absolute top-[50%] right-[49%]">
+            <CircularProgress />
+          </div>
+        )}
         <div className="grid grid-cols-1 gap-6">
           <label className="block">
             <span className="text-gray-700">Recipient's wallet address</span>

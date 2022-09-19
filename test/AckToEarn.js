@@ -33,6 +33,7 @@ describe("AckToEarn", function () {
         "Some message",
         otherAccount.address,
         "bidder@email.com",
+        "fileCid",
         { value: bidAmount }
       );
 
@@ -76,6 +77,7 @@ describe("AckToEarn", function () {
           "Some message",
           otherAccount.address,
           "bidder@email.com",
+          "fileCid",
           { value: bidAmount }
         )
       ).to.be.revertedWith(
@@ -95,6 +97,7 @@ describe("AckToEarn", function () {
         "Some message",
         otherAccount.address,
         "bidder@email.com",
+        "fileCid",
         { value: bidAmount }
       );
 
@@ -119,6 +122,7 @@ describe("AckToEarn", function () {
         "Some message",
         otherAccount.address,
         "bidder@email.com",
+        "fileCid",
         { value: bidAmount }
       );
 
@@ -141,6 +145,7 @@ describe("AckToEarn", function () {
         "Some message",
         otherAccount.address,
         "bidder@email.com",
+        "fileCid",
         { value: bidAmount }
       );
 
@@ -166,6 +171,7 @@ describe("AckToEarn", function () {
         "Some message",
         otherAccount.address,
         "bidder@email.com",
+        "fileCid",
         { value: bidAmount }
       );
 
@@ -193,6 +199,32 @@ describe("AckToEarn", function () {
     });
   });
 
+  describe("Owner", function () {
+    it("Should be able to withdraw platform fees", async function () {
+      const { ackToEarn, owner, otherAccount } = await loadFixture(
+        deployAckToEarnFixture
+      );
+      const bidAmount = ethers.utils.parseEther("1");
+      const withdrawAmount = (bidAmount * 10) / 100;
+
+      await ackToEarn
+        .connect(otherAccount)
+        .sendBid(
+          "Some message",
+          "0x0000000000000000000000000000000000000001",
+          "bidder@email.com",
+          "fileCid",
+          { value: bidAmount }
+        );
+
+      const newOwnerBalance = await ackToEarn.balances(owner.address);
+
+      expect(
+        await ackToEarn.withdrawFunds(withdrawAmount.toString())
+      ).to.changeEtherBalance(owner, newOwnerBalance.toString());
+    });
+  });
+
   describe("Events", function () {
     it("Should emit an event on new bid", async function () {
       const { ackToEarn, owner, otherAccount } = await loadFixture(
@@ -205,6 +237,7 @@ describe("AckToEarn", function () {
           "Some message",
           otherAccount.address,
           "bidder@email.com",
+          "fileCid",
           { value: bidAmount }
         )
       )
@@ -223,6 +256,7 @@ describe("AckToEarn", function () {
         "Some message",
         otherAccount.address,
         "bidder@email.com",
+        "fileCid",
         { value: bidAmount }
       );
 
@@ -254,6 +288,7 @@ describe("AckToEarn", function () {
         "Some message",
         otherAccount.address,
         "bidder@email.com",
+        "fileCid",
         { value: bidAmount }
       );
 
@@ -275,6 +310,7 @@ describe("AckToEarn", function () {
         "Some message",
         otherAccount.address,
         "bidder@email.com",
+        "fileCid",
         { value: bidAmount }
       );
 

@@ -24,6 +24,7 @@ contract AckToEarn is Ownable, ReentrancyGuard {
         address recipient;
         string responseEmailAddress;
         string message;
+        string fileCid;
         bool claimed;
         bool exists;
     }
@@ -46,7 +47,7 @@ contract AckToEarn is Ownable, ReentrancyGuard {
     /**
     * @notice Send a message and bid amount to a recipient
     */
-    function sendBid(string memory message, address recipient, string memory responseAddress) external payable {
+    function sendBid(string memory message, address recipient, string memory responseAddress, string memory fileCid) external payable {
         require(recipient != address(0), "Recipient cannot be the zero address");
         require(
             // If the recipient doesn't have a minimum payment set then the mapping returns 0
@@ -54,16 +55,20 @@ contract AckToEarn is Ownable, ReentrancyGuard {
             "Ether value does not meet the recipient's minimum message amount"
         );
 
+        // The recipient gets 90% of the bid amount
+        uint recipientAmount = (msg.value * 90) / 100;
+        uint ownerAmount = msg.value - recipientAmount;
+
         uint newBidId = bidIds.current();
         Bid memory bid = Bid({
             id: newBidId,
-            // The recipient gets 90% of the bid amount
-            recipientAmount: (msg.value * 90) / 100,
+            recipientAmount: recipientAmount,
             timestamp: block.timestamp,
             bidder: msg.sender,
             recipient: recipient,
             responseEmailAddress: responseAddress,
             message: message,
+            fileCid: fileCid,
             claimed: false,
             exists: true
         });
@@ -72,6 +77,7 @@ contract AckToEarn is Ownable, ReentrancyGuard {
 
         bidderBids[msg.sender][newBidId] = bid;
         recipientBids[recipient][newBidId] = bid;
+        balances[owner()] += ownerAmount;
 
         emit NewBid(msg.sender, recipient, msg.value);
     }
@@ -144,7 +150,7 @@ contract AckToEarn is Ownable, ReentrancyGuard {
     /**
     * @notice Allows funds to be withdrawn from the account's contract balance
     */
-    function withdrawFunds(uint amount) external {
+    function withdrawFunds(uint amount) external nonReentrant {
         require(balances[msg.sender] >= amount, "Tried to withdraw more funds than the account's balance");
 
         balances[msg.sender] -= amount;

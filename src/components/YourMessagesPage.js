@@ -122,6 +122,36 @@ const YourMessagesPage = (props) => {
     }
   };
 
+  if (!walletProvider) {
+    return (
+      <div className="text-center text-2xl">Please connect your wallet</div>
+    );
+  }
+
+  const formatMessage = (message) => {
+    return (
+      <div className="py-3">
+        <div>{`Recipient: ${message.recipient}`}</div>
+        <div>{`Bidder: ${message.bidder}`}</div>
+        <div>{`Message: ${message.message}`}</div>
+        <div>{`Email: ${message.responseEmailAddress}`}</div>
+        {message.fileCid && (
+          <div>
+            File:{" "}
+            <a
+              target="_blank"
+              href={`https://dweb.link/ipfs/${message.fileCid}`}
+              rel="noreferrer"
+              className="text-blue-700 underline"
+            >
+              Link
+            </a>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className=" pt-4">
       <Grid container spacing={0} className="bg-blue-100 align-middle p-1">
