@@ -8,7 +8,6 @@ function Balance(props) {
   useEffect(() => {
     const getMyBalance = async () => {
       const balance = await getBalance(walletProvider, walletAddress);
-      console.log(" balance", balance);
       setBalance(balance);
     };
     getMyBalance();

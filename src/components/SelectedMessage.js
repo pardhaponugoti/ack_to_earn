@@ -10,8 +10,6 @@ function SelectedMessage(props) {
 
   useEffect(() => {
     const getDays = () => {
-      console.log(" selectedMessage", selectedMessage);
-
       let timeStamp = selectedMessage?.timestamp.toString();
       // converts it to milliseconds
       timeStamp = timeStamp * 1000;
@@ -33,10 +31,8 @@ function SelectedMessage(props) {
   }, [selectedMessage]);
 
   const claimBalance = async (messageId) => {
-    console.log("messageId", messageId);
-    console.log("Convert", messageId.toString());
     // const balance = await getClaimBalance(walletProvider, messageId);
-    // console.log("what is my new  balance", balance);
+    // console.log("new  balance", balance);
   };
 
   return (
