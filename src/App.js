@@ -58,7 +58,7 @@ function App() {
               component="div"
               sx={{ flexGrow: 1, textAlign: "left" }}
             >
-              Ack To Earn
+              ACK TO EARN
             </Typography>
             {walletAddress ? (
               <Typography
