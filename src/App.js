@@ -32,11 +32,11 @@ function App() {
     await provider.send("eth_requestAccounts", []);
     const address = await provider.getSigner().getAddress();
     const ensName = await provider.lookupAddress(address);
-    const balanceWei = await getBalance(provider, address);
-    const balanceEth = ethers.utils.formatEther(balanceWei);
+    const balanceEth = await getBalance(provider, address);
 
     setWalletProvider(provider);
     setWalletAddress(ensName ?? address);
+    setBalance(balanceEth);
   };
 
   let selectedTab = 0;
