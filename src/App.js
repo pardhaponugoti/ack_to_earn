@@ -14,17 +14,19 @@ import Typography from "@mui/material/Typography";
 import HowItWorksPage from "./components/HowItWorksPage";
 import SendMessagePage from "./components/send-message/SendMessage";
 import YourMessagesPage from "./components/YourMessagesPage";
+import Balance from "./components/Balance";
 
 import {
   PAGE_ROUTE_SEND_MESSAGE,
   PAGE_ROUTE_YOUR_MESSAGES,
+  PAGE_ROUTE_BALANCE,
 } from "./constants/Routing";
 import "./App.css";
 
 function App() {
   const [walletAddress, setWalletAddress] = useState(null);
   const [walletProvider, setWalletProvider] = useState(null);
-  const [balance, setBalance] = useState(0);
+  const [transactionCount, setTransactionCount] = useState(0);
 
   const getWallet = async () => {
     const ethereum = await detectEthereumProvider();
@@ -45,6 +47,8 @@ function App() {
     selectedTab = 1;
   } else if (location.pathname.includes(PAGE_ROUTE_YOUR_MESSAGES)) {
     selectedTab = 2;
+  } else if (location.pathname.includes(PAGE_ROUTE_BALANCE)) {
+    selectedTab = 3;
   }
 
   return (
@@ -85,13 +89,22 @@ function App() {
         <Link to={PAGE_ROUTE_YOUR_MESSAGES} style={{ textDecoration: "none" }}>
           <Tab label="Your Messages" />
         </Link>
+        <Link to={PAGE_ROUTE_BALANCE} style={{ textDecoration: "none" }}>
+          <Tab label="Your Balance" />
+        </Link>
       </Tabs>
       <Routes>
         <Route path="/">
           <Route index element={<HowItWorksPage />} />
           <Route
             path={PAGE_ROUTE_SEND_MESSAGE}
-            element={<SendMessagePage walletProvider={walletProvider} />}
+            element={
+              <SendMessagePage
+                walletProvider={walletProvider}
+                transactionCount={transactionCount}
+                setTransactionCount={setTransactionCount}
+              />
+            }
           />
           <Route
             path={PAGE_ROUTE_YOUR_MESSAGES}
@@ -99,6 +112,19 @@ function App() {
               <YourMessagesPage
                 walletProvider={walletProvider}
                 walletAddress={walletAddress}
+                transactionCount={transactionCount}
+                setTransactionCount={setTransactionCount}
+              />
+            }
+          />
+          <Route
+            path={PAGE_ROUTE_BALANCE}
+            element={
+              <Balance
+                walletProvider={walletProvider}
+                walletAddress={walletAddress}
+                transactionCount={transactionCount}
+                setTransactionCount={setTransactionCount}
               />
             }
           />
