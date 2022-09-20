@@ -82,10 +82,14 @@ const YourMessagesPage = (props) => {
 
   // Filter by category
   if (filterCategory === "Active") {
-    filteredMessages = filteredMessages.filter((message) => !message.expired);
+    filteredMessages = filteredMessages.filter(
+      (message) => !message.expired && !message.claimed
+    );
   }
   if (filterCategory === "Expired") {
-    filteredMessages = filteredMessages.filter((message) => message.expired);
+    filteredMessages = filteredMessages.filter(
+      (message) => message.expired && !message.claimed
+    );
   }
   if (filterCategory === "Claimed") {
     filteredMessages = filteredMessages.filter((message) => message.claimed);

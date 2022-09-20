@@ -61,7 +61,10 @@ export const claimBalance = async (walletProvider, messageId) => {
   const ackToEarnContract = getContract(walletProvider);
 
   try {
-    await ackToEarnContract.claimBid(messageId);
+    const transaction = await ackToEarnContract.claimBid(messageId);
+    const returnValue = await transaction.wait();
+
+    return returnValue;
   } catch (err) {
     console.log("AckToEarn claimBalance transaction failed", err);
   }
@@ -83,7 +86,10 @@ export const getBalance = async (walletProvider, walletAddress) => {
 export const withdrawFunds = async (walletProvider, balance) => {
   const ackToEarnContract = getContract(walletProvider);
   try {
-    await ackToEarnContract.withdrawFunds(balance);
+    const transaction = await ackToEarnContract.withdrawFunds(balance);
+    const returnValue = await transaction.wait();
+
+    return returnValue;
   } catch (err) {
     console.log("AckToEarn getBalance transaction failed", err);
   }
