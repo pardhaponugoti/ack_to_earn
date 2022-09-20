@@ -111,13 +111,15 @@ function SelectedMessage(props) {
               </React.Fragment>
             )}
 
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => claimMessageBalance(selectedMessage)}
-            >
-              Acknowledge this message
-            </Button>
+            {!selectedMessage.claimed && !selectedMessage.expired && (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => claimMessageBalance(selectedMessage)}
+              >
+                Acknowledge this message
+              </Button>
+            )}
           </CardContent>
         </div>
       ) : (

@@ -50,6 +50,9 @@ const YourMessagesPage = (props) => {
             expired: isMessageExpired(message),
             ...message,
           };
+        })
+        .sort((message1, message2) => {
+          return message2.timestamp - message1.timestamp;
         });
 
       setAllMessages(yourMessages);
