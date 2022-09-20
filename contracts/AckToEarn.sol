@@ -144,7 +144,7 @@ contract AckToEarn is Ownable, ReentrancyGuard {
         require(bid.exists, "Bid not found");
         require(!bid.claimed, "Bid balance has already been claimed");
         require(!isBidExpired(bidId, msg.sender), "Bid is expired");
-        // Require the reclaimer to be the bidder
+        // Require the claimer to be the recipient
         require(
             bid.recipient == msg.sender,
             "Cannot reclaim a bid you didn't receive"
