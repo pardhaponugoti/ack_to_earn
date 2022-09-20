@@ -25,9 +25,11 @@ function SendMessage(props) {
   const storageClient = getStorageClient();
 
   useEffect(() => {
-    const specifiedAddress = new URLSearchParams(queryParams).get("to");
-    setSearchParams({});
-    setRecipientWallet(specifiedAddress);
+    if (queryParams) {
+      const specifiedAddress = new URLSearchParams(queryParams).get("to");
+      setSearchParams({});
+      setRecipientWallet(specifiedAddress);
+    }
   }, [queryParams, setSearchParams]);
 
   const send = async (e) => {
