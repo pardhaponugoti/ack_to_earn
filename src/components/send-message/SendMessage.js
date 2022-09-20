@@ -123,7 +123,7 @@ function SendMessage(props) {
               <div>
                 <img className="img__img" src={question} alt="question" />
                 <p className="img__description">
-                  How recipient can get in touch with you.
+                  An email address they can reply to
                 </p>
               </div>
             </div>
@@ -131,7 +131,7 @@ function SendMessage(props) {
             <input
               type="email"
               className="shadow-sm bg-gray-50 border  border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-ligh"
-              placeholder="johndoe.example.com"
+              placeholder="johndoe@example.com"
               onChange={(e) => setEmail(e.target.value)}
               id="exampleEmail0"
               value={email}
