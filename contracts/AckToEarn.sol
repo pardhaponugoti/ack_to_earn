@@ -7,8 +7,6 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "hardhat/console.sol";
 
 contract AckToEarn is Ownable, ReentrancyGuard {
-    using Counters for Counters.Counter;
-
     event BidClaimed(address indexed recipient, uint256 bidId);
     event BidReclaimed(address indexed bidder, uint256 amount);
     event FundsWithdrawn(address indexed account, uint256 amount);
