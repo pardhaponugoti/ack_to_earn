@@ -19,7 +19,7 @@ function SendMessage(props) {
   const [attachedFile, setAttachedFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const queryParams = useLocation().search;
-  const [_searchParams, setSearchParams] = useSearchParams();
+  const [_, setSearchParams] = useSearchParams();
 
   const storageClient = getStorageClient();
 
