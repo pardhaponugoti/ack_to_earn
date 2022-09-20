@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getBalance, getWithdrawFunds } from "../utils/Contract";
+import { getBalance, withdrawFunds } from "../utils/Contract";
 import { Button, Card, Container } from "@mui/material";
 function Balance(props) {
   const {
@@ -7,22 +7,23 @@ function Balance(props) {
     walletAddress,
     receivedMessagesBalance,
     sentMessagesBalance,
+    transactionCount,
+    setTransactionCount,
   } = props;
   const [balance, setBalance] = useState(0);
-  const [txConfirmation, setTxConfirmation] = useState("");
 
   useEffect(() => {
     const getMyBalance = async () => {
       const balance = await getBalance(walletProvider, walletAddress);
       setBalance(balance);
     };
-    getMyBalance();
-  }, []);
 
-  const sentToWallet = async () => {
-    const tx = await getWithdrawFunds(walletProvider, balance);
-    setTxConfirmation(tx);
-    console.log(" ~ tx", tx);
+    getMyBalance();
+  }, [walletProvider, walletAddress, transactionCount]);
+
+  const sendToWallet = async () => {
+    await withdrawFunds(walletProvider, balance);
+    setTransactionCount(transactionCount + 1);
   };
 
   return (
@@ -51,7 +52,7 @@ function Balance(props) {
             <Button
               className="basis-1/4"
               variant="contained"
-              onClick={sentToWallet}
+              onClick={sendToWallet}
               disabled={balance <= 0 ? true : false}
             >
               Send to wallet

@@ -25,8 +25,7 @@ import "./App.css";
 function App() {
   const [walletAddress, setWalletAddress] = useState(null);
   const [walletProvider, setWalletProvider] = useState(null);
-  const [receivedMessagesBalance, setReceivedMessagesBalance] = useState(0);
-  const [sentMessagesBalance, setSentMessagesBalance] = useState(0);
+  const [transactionCount, setTransactionCount] = useState(0);
 
   const getWallet = async () => {
     const ethereum = await detectEthereumProvider();
@@ -94,7 +93,13 @@ function App() {
           <Route index element={<HowItWorksPage />} />
           <Route
             path={PAGE_ROUTE_SEND_MESSAGE}
-            element={<SendMessagePage walletProvider={walletProvider} />}
+            element={
+              <SendMessagePage
+                walletProvider={walletProvider}
+                transactionCount={transactionCount}
+                setTransactionCount={setTransactionCount}
+              />
+            }
           />
           <Route
             path={PAGE_ROUTE_YOUR_MESSAGES}
@@ -102,8 +107,8 @@ function App() {
               <YourMessagesPage
                 walletProvider={walletProvider}
                 walletAddress={walletAddress}
-                setReceivedMessagesBalance={setReceivedMessagesBalance}
-                setSentMessagesBalance={setSentMessagesBalance}
+                transactionCount={transactionCount}
+                setTransactionCount={setTransactionCount}
               />
             }
           />
@@ -113,8 +118,8 @@ function App() {
               <Balance
                 walletProvider={walletProvider}
                 walletAddress={walletAddress}
-                receivedMessagesBalance={receivedMessagesBalance}
-                sentMessagesBalance={sentMessagesBalance}
+                transactionCount={transactionCount}
+                setTransactionCount={setTransactionCount}
               />
             }
           />

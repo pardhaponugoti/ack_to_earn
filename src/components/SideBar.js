@@ -6,7 +6,7 @@ import {
   ListItemText,
 } from "@mui/material";
 function SideBar(props) {
-  const { activeLink, selectData } = props;
+  const { messageType, setMessageType } = props;
 
   return (
     <div>
@@ -20,18 +20,18 @@ function SideBar(props) {
         <List style={{ backgroundColor: "#dfdddd6b", height: "88vh" }}>
           <ListItem
             disablePadding
-            className={activeLink === "Inbox" ? "bg-gray-300" : ""}
+            className={messageType === "Inbox" ? "bg-gray-300" : ""}
           >
-            <ListItemButton onClick={() => selectData("Inbox")}>
+            <ListItemButton onClick={() => setMessageType("Inbox")}>
               <ListItemText primary="Inbox" />
             </ListItemButton>
           </ListItem>
 
           <ListItem
             disablePadding
-            className={activeLink === "Sent" ? "bg-gray-300" : ""}
+            className={messageType === "Sent" ? "bg-gray-300" : ""}
           >
-            <ListItemButton onClick={() => selectData("Sent")}>
+            <ListItemButton onClick={() => setMessageType("Sent")}>
               <ListItemText primary="Sent" />
             </ListItemButton>
           </ListItem>

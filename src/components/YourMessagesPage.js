@@ -11,116 +11,53 @@ const YourMessagesPage = (props) => {
   const {
     walletProvider,
     walletAddress,
-    setReceivedMessagesBalance,
-    setSentMessagesBalance,
+    transactionCount,
+    setTransactionCount,
   } = props;
-  const [selectedMessage, setSelectedMessage] = useState("");
+  const [selectedMessage, setSelectedMessage] = useState(null);
   const [allMessages, setAllMessages] = useState([]);
-  const [receivedMessages, setReceivedMessages] = useState([]);
-  const [data, setData] = useState([]);
-  const [sentMessages, setSendMessages] = useState([]);
-  const [activeLink, setActiveLink] = useState("");
+  const [messageType, setMessageType] = useState("Inbox");
   const [filterCategory, setFilterCategory] = useState("All");
 
-  const selectData = async (messageType) => {
-    setActiveLink(messageType);
-    if (messageType === "Inbox") setData(receivedMessages);
-    if (messageType === "Sent") setData(sentMessages);
+  const isMessageExpired = (message) => {
+    let timeStamp = message.timestamp.toString();
+    timeStamp = timeStamp * 1000; //converts it to milliseconds
+    let deadlineDay = new Date(timeStamp);
+    deadlineDay.setHours(deadlineDay.getHours() + 168); // add 7 days
+    const date1 = new Date(deadlineDay);
+    const date2 = new Date();
+    const remainder = (date1 - date2) / 1000 / 60 / 60 / 24;
+    return remainder < 0;
   };
 
-  const selectDataByCategory = async (filterBy) => {
-    const sentMessagesArray = allMessages.filter(
-      (message) => message.bidder === walletAddress
-    );
-    const receivedMessageArray = allMessages.filter(
-      (message) => message.recipient === walletAddress
-    );
-    setFilterCategory(filterBy);
-
-    if (activeLink === "Inbox") {
-      if (filterBy === "All") {
-        setData(receivedMessageArray);
-      } else if (filterBy === "Active") {
-        setData(getActiveMessages(receivedMessageArray));
-      } else if (filterBy === "Claimed") {
-        setData(getClaimedMessages(receivedMessageArray));
-      } else if (filterBy === "Expired") {
-        setData(getExpiredMessages(receivedMessageArray));
-      }
-    } else {
-      // SENT MESSAGE
-      if (filterBy === "All") {
-        setData(sentMessagesArray);
-      } else if (filterBy === "Active") {
-        setData(getActiveMessages(sentMessagesArray));
-      } else if (filterBy === "Claimed") {
-        setData(getClaimedMessages(sentMessagesArray));
-      } else if (filterBy === "Expired") {
-        setData(getExpiredMessages(sentMessagesArray));
-      }
-    }
-  };
-
-  const getActiveMessages = (listArray) => {
-    return listArray.filter((message) => {
-      let timeStamp = message.timestamp.toString();
-      timeStamp = timeStamp * 1000;
-      let deadlineDay = new Date(timeStamp);
-      deadlineDay.setHours(deadlineDay.getHours() + 168);
-      const date1 = new Date(deadlineDay);
-      const date2 = new Date();
-      const remainder = (date1 - date2) / 1000 / 60 / 60 / 24;
-      return remainder > 0;
-    });
-  };
-
-  const getClaimedMessages = (listArray) => {
-    return listArray.filter((message) => message.claimed === true);
-  };
-
-  const getExpiredMessages = (listArray) => {
-    return listArray.filter((message) => {
-      let timeStamp = message.timestamp.toString();
-      timeStamp = timeStamp * 1000; //converts it to milliseconds
-      let deadlineDay = new Date(timeStamp);
-      deadlineDay.setHours(deadlineDay.getHours() + 168); // add 7 days
-      const date1 = new Date(deadlineDay);
-      const date2 = new Date();
-      const remainder = (date1 - date2) / 1000 / 60 / 60 / 24;
-      return remainder < 0;
-    });
+  const setFilterCategoryAndResetMessage = (filterCategory) => {
+    setFilterCategory(filterCategory);
+    setSelectedMessage(null);
   };
 
   useEffect(() => {
     const fetchMessages = async () => {
       const messages = await getMessages(walletProvider);
-      setAllMessages(messages);
-      const sent = messages.filter(
-        (message) => message.bidder === walletAddress
-      );
-      setSendMessages(sent);
-      const received = messages.filter(
-        (message) => message.recipient === walletAddress
-      );
-
-      setReceivedMessages(received);
-      getMessagesBalance("sent", sent);
-      getMessagesBalance("received", received);
+      const yourMessages = messages
+        .filter((message) => {
+          return (
+            message.bidder === walletAddress ||
+            message.recipient === walletAddress
+          );
+        })
+        .map((message) => {
+          return {
+            expired: isMessageExpired(message),
+            ...message,
+          };
+        });
+      setAllMessages(yourMessages);
     };
-    fetchMessages();
-  }, []);
 
-  const getMessagesBalance = async (listType, listArray) => {
-    let balance = 0;
-    for (let i = 0; i < listArray.length; i++) {
-      const currentBalance = listArray[i].recipientAmount.toString() / 10 ** 18;
-      balance += +currentBalance;
+    if (walletProvider) {
+      fetchMessages();
     }
-    if (listType === "sent") setSentMessagesBalance(balance);
-    else {
-      setReceivedMessagesBalance(balance);
-    }
-  };
+  }, [walletProvider, walletAddress, transactionCount]);
 
   if (!walletProvider) {
     return (
@@ -128,29 +65,30 @@ const YourMessagesPage = (props) => {
     );
   }
 
-  const formatMessage = (message) => {
-    return (
-      <div className="py-3">
-        <div>{`Recipient: ${message.recipient}`}</div>
-        <div>{`Bidder: ${message.bidder}`}</div>
-        <div>{`Message: ${message.message}`}</div>
-        <div>{`Email: ${message.responseEmailAddress}`}</div>
-        {message.fileCid && (
-          <div>
-            File:{" "}
-            <a
-              target="_blank"
-              href={`https://dweb.link/ipfs/${message.fileCid}`}
-              rel="noreferrer"
-              className="text-blue-700 underline"
-            >
-              Link
-            </a>
-          </div>
-        )}
-      </div>
+  let filteredMessages = allMessages;
+
+  // Filter by message type
+  if (messageType === "Inbox") {
+    filteredMessages = filteredMessages.filter(
+      (message) => message.recipient === walletAddress
     );
-  };
+  }
+  if (messageType === "Sent") {
+    filteredMessages = filteredMessages.filter(
+      (message) => message.bidder === walletAddress
+    );
+  }
+
+  // Filter by category
+  if (filterCategory === "Active") {
+    filteredMessages = filteredMessages.filter((message) => !message.expired);
+  }
+  if (filterCategory === "Expired") {
+    filteredMessages = filteredMessages.filter((message) => message.expired);
+  }
+  if (filterCategory === "Claimed") {
+    filteredMessages = filteredMessages.filter((message) => message.claimed);
+  }
 
   return (
     <div className=" pt-4">
@@ -159,7 +97,7 @@ const YourMessagesPage = (props) => {
         <Grid item xs={3}>
           <Filters
             filterCategory={filterCategory}
-            selectDataByCategory={selectDataByCategory}
+            setFilterCategory={setFilterCategoryAndResetMessage}
           />
         </Grid>
         <Grid item xs={7}>
@@ -169,15 +107,11 @@ const YourMessagesPage = (props) => {
 
       <Grid container spacing={0}>
         <Grid item xs={2}>
-          <SideBar
-            selectData={selectData}
-            setActiveLink={setActiveLink}
-            activeLink={activeLink}
-          />
+          <SideBar setMessageType={setMessageType} messageType={messageType} />
         </Grid>
         <Grid item xs={3}>
           <MessageList
-            data={data}
+            data={filteredMessages}
             setSelectedMessage={setSelectedMessage}
             selectedMessage={selectedMessage}
           />
@@ -187,6 +121,8 @@ const YourMessagesPage = (props) => {
             selectedMessage={selectedMessage}
             walletProvider={walletProvider}
             walletAddress={walletAddress}
+            transactionCount={transactionCount}
+            setTransactionCount={setTransactionCount}
           />
         </Grid>
       </Grid>

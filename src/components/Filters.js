@@ -1,5 +1,6 @@
 function Filters(props) {
-  const { filterCategory, selectDataByCategory } = props;
+  const { filterCategory, setFilterCategory } = props;
+
   return (
     <div className="flex  pt-2">
       <p className="pl-2 pr-6">Filter:</p>
@@ -10,7 +11,7 @@ function Filters(props) {
             ? "inline-block px-4 py-1 bg-blue-600 text-white font-medium text-xs leading-tight capitalized rounded-full shadow-md"
             : "inline-block px-4 py-1 border-2 border-gray-300 text-gray-600 font-medium text-xs leading-tight capitalized rounded-full hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
         }
-        onClick={() => selectDataByCategory("All")}
+        onClick={() => setFilterCategory("All")}
       >
         All
       </button>
@@ -22,7 +23,7 @@ function Filters(props) {
             ? "inline-block px-4 py-1 bg-blue-600 text-white font-medium text-xs leading-tight capitalized rounded-full shadow-md"
             : "inline-block px-4 py-1 border-2 border-gray-300 text-gray-600 font-medium text-xs leading-tight capitalized rounded-full hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
         }
-        onClick={() => selectDataByCategory("Active")}
+        onClick={() => setFilterCategory("Active")}
       >
         Active
       </button>
@@ -34,7 +35,7 @@ function Filters(props) {
             ? "inline-block px-4 py-1 bg-blue-600 text-white font-medium text-xs leading-tight capitalized rounded-full shadow-md"
             : "inline-block px-4 py-1 border-2 border-gray-300 text-gray-600 font-medium text-xs leading-tight capitalized rounded-full hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
         }
-        onClick={() => selectDataByCategory("Claimed")}
+        onClick={() => setFilterCategory("Claimed")}
       >
         Claimed
       </button>
@@ -46,7 +47,7 @@ function Filters(props) {
             ? "inline-block px-4 py-1 bg-blue-600 text-white font-medium text-xs leading-tight capitalized rounded-full shadow-md"
             : "inline-block px-4 py-1 border-2 border-gray-300 text-gray-600 font-medium text-xs leading-tight capitalized rounded-full hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
         }
-        onClick={() => selectDataByCategory("Expired")}
+        onClick={() => setFilterCategory("Expired")}
       >
         Expired
       </button>

@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
-import { getClaimBalance } from "../utils/Contract";
+import { claimBalance } from "../utils/Contract";
 import { Button, CardContent, Typography } from "@mui/material";
 import download from "../images/download.png";
 import Moment from "react-moment";
 
 function SelectedMessage(props) {
-  const { walletProvider, selectedMessage } = props;
+  const {
+    walletProvider,
+    selectedMessage,
+    transactionCount,
+    setTransactionCount,
+  } = props;
   const [deadline, setDeadline] = useState("1");
 
   useEffect(() => {
@@ -29,10 +34,9 @@ function SelectedMessage(props) {
     // eslint-disable-next-line no-use-before-define
   }, [selectedMessage]);
 
-  const claimBalance = async (messageId) => {
-    console.log("messageId", messageId.toString());
-    // const balance = await getClaimBalance(walletProvider, messageId.toString());
-    // // console.log("new  balance", balance);
+  const claimMessageBalance = async (message) => {
+    await claimBalance(walletProvider, message.id.toNumber());
+    setTransactionCount(transactionCount + 1);
   };
 
   return (
@@ -93,7 +97,7 @@ function SelectedMessage(props) {
             <Button
               variant="contained"
               color="primary"
-              onClick={() => claimBalance(selectedMessage.id)}
+              onClick={() => claimMessageBalance(selectedMessage)}
             >
               Acknowledge this message
             </Button>

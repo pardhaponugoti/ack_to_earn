@@ -10,7 +10,11 @@ function MessageList(props) {
         data.map((message, index) => (
           <div key={index} sx={{ minWidth: 275 }}>
             <CardContent
-              className={message.id === selectedMessage.id ? "bg-blue-200" : ""}
+              className={
+                selectedMessage && message.id === selectedMessage.id
+                  ? "bg-blue-200"
+                  : ""
+              }
               onClick={() => setSelectedMessage(message)}
             >
               <div style={{ textAlign: "right", paddingBottom: "0.5rem" }}>

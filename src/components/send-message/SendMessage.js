@@ -8,7 +8,7 @@ import { sendMessage } from "../../utils/Contract";
 import { getStorageClient } from "../../utils/FileStorage";
 
 function SendMessage(props) {
-  const { walletProvider } = props;
+  const { walletProvider, transactionCount, setTransactionCount } = props;
   const [recipientWallet, setRecipientWallet] = useState("");
   const [message, setMessage] = useState("");
   const [email, setEmail] = useState("");
@@ -52,6 +52,8 @@ function SendMessage(props) {
       // TODO: set error state with descriptive error message
     }
 
+    setTransactionCount(transactionCount + 1);
+
     setIsLoading(false);
   };
 
@@ -78,6 +80,7 @@ function SendMessage(props) {
               placeholder="0x11..A31"
               onChange={(e) => setRecipientWallet(e.target.value)}
               value={recipientWallet}
+              disabled={isLoading}
             />
           </label>
           <label className="block">
@@ -87,6 +90,7 @@ function SendMessage(props) {
               rows={3}
               onChange={(e) => setMessage(e.target.value)}
               value={message}
+              disabled={isLoading}
               placeholder="your message..."
             />
           </label>
@@ -109,6 +113,7 @@ function SendMessage(props) {
               onChange={(e) => setEmail(e.target.value)}
               id="exampleEmail0"
               value={email}
+              disabled={isLoading}
             />
           </label>
 
@@ -120,6 +125,7 @@ function SendMessage(props) {
               placeholder="1"
               onChange={(e) => setBidAmount(e.target.value)}
               value={bidAmount}
+              disabled={isLoading}
             />
           </label>
 
@@ -127,6 +133,7 @@ function SendMessage(props) {
             type="submit"
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             onClick={send}
+            disabled={isLoading}
           >
             Send Message
           </button>
