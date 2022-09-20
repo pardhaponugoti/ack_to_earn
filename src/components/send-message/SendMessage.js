@@ -27,7 +27,7 @@ function SendMessage(props) {
     const specifiedAddress = new URLSearchParams(queryParams).get("to");
     setSearchParams({});
     setRecipientWallet(specifiedAddress);
-  }, []);
+  }, [queryParams, setSearchParams]);
 
   const send = async (e) => {
     let fileCid = "";
