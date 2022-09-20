@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation, useSearchParams } from "react-router-dom";
+import { ethers } from "ethers";
+import detectEthereumProvider from "@metamask/detect-provider";
 
 import CircularProgress from "@mui/material/CircularProgress";
 
@@ -6,8 +9,6 @@ import "./SendMessage.css";
 import question from "../../images/question.png";
 import { sendMessage } from "../../utils/Contract";
 import { getStorageClient } from "../../utils/FileStorage";
-import { ethers } from "ethers";
-import detectEthereumProvider from "@metamask/detect-provider";
 
 function SendMessage(props) {
   const { walletProvider, transactionCount, setTransactionCount } = props;
@@ -17,8 +18,16 @@ function SendMessage(props) {
   const [bidAmount, setBidAmount] = useState("");
   const [attachedFile, setAttachedFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const queryParams = useLocation().search;
+  const [_searchParams, setSearchParams] = useSearchParams();
 
   const storageClient = getStorageClient();
+
+  useEffect(() => {
+    const specifiedAddress = new URLSearchParams(queryParams).get("to");
+    setSearchParams({});
+    setRecipientWallet(specifiedAddress);
+  }, []);
 
   const send = async (e) => {
     let fileCid = "";
@@ -57,7 +66,6 @@ function SendMessage(props) {
     }
 
     setTransactionCount(transactionCount + 1);
-
     setIsLoading(false);
   };
 
