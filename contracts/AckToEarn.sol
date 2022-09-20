@@ -29,8 +29,6 @@ contract AckToEarn is Ownable, ReentrancyGuard {
         bool exists;
     }
 
-    mapping(address => mapping(uint256 => Bid)) private bidderBids;
-    mapping(address => mapping(uint256 => Bid)) private recipientBids;
     mapping(address => uint256) public balances;
     mapping(address => uint256) public minimumPaymentAmounts;
 
@@ -67,8 +65,7 @@ contract AckToEarn is Ownable, ReentrancyGuard {
         uint256 recipientAmount = (msg.value * 90) / 100;
         uint256 ownerAmount = msg.value - recipientAmount;
 
-        bidIds.increment();
-        uint256 newBidId = bidIds.current();
+        uint256 newBidId = bids.length;
         Bid memory bid = Bid({
             id: newBidId,
             recipientAmount: recipientAmount,
@@ -84,8 +81,6 @@ contract AckToEarn is Ownable, ReentrancyGuard {
 
         bids.push(bid);
 
-        bidderBids[msg.sender][newBidId] = bid;
-        recipientBids[recipient][newBidId] = bid;
         balances[owner()] += ownerAmount;
 
         emit NewBid(msg.sender, recipient, msg.value);
@@ -102,7 +97,7 @@ contract AckToEarn is Ownable, ReentrancyGuard {
 
         for (uint256 i = 0; i < bidIdsToReclaim.length; i++) {
             uint256 bidId = bidIdsToReclaim[i];
-            Bid memory bid = bidderBids[msg.sender][bidId];
+            Bid memory bid = bids[bidId];
 
             if (!bid.exists) {
                 continue;
@@ -115,9 +110,14 @@ contract AckToEarn is Ownable, ReentrancyGuard {
             if (!isBidExpired(bidId, msg.sender)) {
                 continue;
             }
+            // Require the reclaimer to be the bidder
+            require(
+                bid.bidder == msg.sender,
+                "Cannot reclaim a bid you didn't send"
+            );
 
             totalReclaimAmount += bid.recipientAmount;
-            bidderBids[msg.sender][bidId].claimed = true;
+            bids[bidId].claimed = true;
         }
 
         require(totalReclaimAmount > 0, "No ether to reclaim.");
@@ -139,13 +139,18 @@ contract AckToEarn is Ownable, ReentrancyGuard {
      * @notice Allows a recipient to acknowledge a message / bid and adds the bid amount to their contract balance
      */
     function claimBid(uint256 bidId) public {
-        Bid memory bid = recipientBids[msg.sender][bidId];
+        Bid memory bid = bids[bidId];
 
         require(bid.exists, "Bid not found");
         require(!bid.claimed, "Bid balance has already been claimed");
         require(!isBidExpired(bidId, msg.sender), "Bid is expired");
+        // Require the reclaimer to be the bidder
+        require(
+            bid.recipient == msg.sender,
+            "Cannot reclaim a bid you didn't receive"
+        );
 
-        recipientBids[msg.sender][bidId].claimed = true;
+        bids[bidId].claimed = true;
         balances[msg.sender] += bid.recipientAmount;
 
         emit BidClaimed(msg.sender, bid.recipientAmount);
@@ -197,16 +202,15 @@ contract AckToEarn is Ownable, ReentrancyGuard {
         view
         returns (bool)
     {
-        bool isBidderAccount = bidderBids[account][bidId].exists;
-        bool isRecipientAccount = recipientBids[account][bidId].exists;
+        Bid memory bid = bids[bidId];
+        bool isBidderAccount = bid.bidder == account;
+        bool isRecipientAccount = bid.recipient == account;
 
         if (isBidderAccount) {
-            return (block.timestamp >=
-                (bidderBids[account][bidId].timestamp + bidExpiryThreshold));
+            return (block.timestamp >= (bid.timestamp + bidExpiryThreshold));
         }
         if (isRecipientAccount) {
-            return (block.timestamp >=
-                (recipientBids[account][bidId].timestamp + bidExpiryThreshold));
+            return (block.timestamp >= (bid.timestamp + bidExpiryThreshold));
         }
 
         return true;
