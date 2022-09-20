@@ -6,6 +6,8 @@ import "./SendMessage.css";
 import question from "../../images/question.png";
 import { sendMessage } from "../../utils/Contract";
 import { getStorageClient } from "../../utils/FileStorage";
+import { ethers } from "ethers";
+import detectEthereumProvider from "@metamask/detect-provider";
 
 function SendMessage(props) {
   const { walletProvider, transactionCount, setTransactionCount } = props;
@@ -31,10 +33,12 @@ function SendMessage(props) {
 
     setIsLoading(true);
 
+    const resolvedAddress = await getResolvedEnsAddress();
+    const recipientWalletAddress = resolvedAddress ?? recipientWallet;
     const sendMessageResult = await sendMessage(
       walletProvider,
       message,
-      recipientWallet,
+      recipientWalletAddress,
       email,
       fileCid,
       bidAmount
@@ -55,6 +59,13 @@ function SendMessage(props) {
     setTransactionCount(transactionCount + 1);
 
     setIsLoading(false);
+  };
+
+  const getResolvedEnsAddress = async () => {
+    const ethereum = await detectEthereumProvider();
+    const provider = new ethers.providers.Web3Provider(ethereum, "any");
+
+    return await provider.resolveName(recipientWallet);
   };
 
   if (!walletProvider) {

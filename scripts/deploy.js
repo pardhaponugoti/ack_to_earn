@@ -15,17 +15,29 @@ async function main() {
   console.log(`AckToEarn contract deployed to ${ackToEarn.address}`);
 
   const bidAmount = hre.ethers.utils.parseEther("1");
-  // Call the function.
-  let txn = await ackToEarn.sendBid(
+  let send_txn = await ackToEarn.sendBid(
     "Read this message",
     "0x0000000000000000000000000000000000000001",
+    "response@address.com",
+    "fileCid",
     { value: bidAmount, gasLimit: 1000000 }
   );
 
-  // Wait for it to be mined.
-  await txn.wait();
+  await send_txn.wait();
 
-  console.log("Sent message");
+  let send_txn_two = await ackToEarn.sendBid(
+    "Read this message NOW",
+    "0x0000000000000000000000000000000000000002",
+    "response@address.com",
+    "fileCid",
+    { value: bidAmount, gasLimit: 1000000 }
+  );
+
+  await send_txn_two.wait();
+
+  const get_bids_txn = await ackToEarn.getBids();
+
+  console.log(get_bids_txn);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
