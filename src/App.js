@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Routes, Route, Link, useLocation } from "react-router-dom";
 import { ethers } from "ethers";
 import detectEthereumProvider from "@metamask/detect-provider";
+import { getBalance } from "./utils/Contract";
 
 import AppBar from "@mui/material/AppBar";
 import Button from "@mui/material/Button";
@@ -23,14 +24,19 @@ import "./App.css";
 function App() {
   const [walletAddress, setWalletAddress] = useState(null);
   const [walletProvider, setWalletProvider] = useState(null);
+  const [balance, setBalance] = useState(0);
 
   const getWallet = async () => {
     const ethereum = await detectEthereumProvider();
     const provider = new ethers.providers.Web3Provider(ethereum, "any");
     await provider.send("eth_requestAccounts", []);
     const address = await provider.getSigner().getAddress();
+    const ensName = await provider.lookupAddress(address);
+    const balanceEth = await getBalance(provider, address);
+
     setWalletProvider(provider);
-    setWalletAddress(address);
+    setWalletAddress(ensName ?? address);
+    setBalance(balanceEth);
   };
 
   let selectedTab = 0;
