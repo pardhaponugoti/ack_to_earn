@@ -1,3 +1,4 @@
+import React from "react";
 import { Button, Divider, CardContent, Typography } from "@mui/material";
 import Moment from "react-moment";
 
@@ -21,15 +22,21 @@ function MessageList(props) {
                 <Button
                   style={{
                     fontSize: "0.7rem",
-                    backgroundColor: "green",
+                    backgroundColor: message.claimed ? "grey" : "green",
                     color: "white",
                     textTransform: "none",
                   }}
                 >
-                  Expires on &nbsp;
-                  <Moment add={{ day: 7 }} format=" MM-DD-YYYY HH:mm">
-                    {message.timestamp}
-                  </Moment>
+                  {message.claimed ? (
+                    "Claimed"
+                  ) : (
+                    <React.Fragment>
+                      Expires on &nbsp;
+                      <Moment add={{ day: 7 }} format=" MM-DD-YYYY HH:mm">
+                        {message.timestamp}
+                      </Moment>
+                    </React.Fragment>
+                  )}
                 </Button>
               </div>
               <div className="flex items-start justify-between">
