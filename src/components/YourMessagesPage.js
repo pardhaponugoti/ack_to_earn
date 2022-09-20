@@ -51,6 +51,7 @@ const YourMessagesPage = (props) => {
             ...message,
           };
         });
+
       setAllMessages(yourMessages);
     };
 
