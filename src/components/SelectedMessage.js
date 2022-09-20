@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { claimBalance } from "../utils/Contract";
 import { Button, CardContent, Typography } from "@mui/material";
 import download from "../images/download.png";
@@ -93,6 +93,23 @@ function SelectedMessage(props) {
               Respond to <span>{selectedMessage.responseEmailAddress}</span>
             </Typography>
             <br />
+
+            {selectedMessage.fileCid && (
+              <React.Fragment>
+                <Typography noWrap variant="body2" color="text.secondary">
+                  File:{" "}
+                  <a
+                    target="_blank"
+                    href={`https://dweb.link/ipfs/${selectedMessage.fileCid}`}
+                    rel="noreferrer"
+                    className="text-blue-700 underline"
+                  >
+                    Link
+                  </a>
+                </Typography>
+                <br />
+              </React.Fragment>
+            )}
 
             <Button
               variant="contained"
