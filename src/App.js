@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Routes, Route, Link, useLocation } from "react-router-dom";
 import { ethers } from "ethers";
 import detectEthereumProvider from "@metamask/detect-provider";
+import { reverseUrl } from "./utils/UnstoppableDomains";
 
 import AppBar from "@mui/material/AppBar";
 import Button from "@mui/material/Button";
@@ -33,9 +34,17 @@ function App() {
     await provider.send("eth_requestAccounts", []);
     const address = await provider.getSigner().getAddress();
     const ensName = await provider.lookupAddress(address);
+    const unstoppableDomainsUrl = await reverseUrl(address);
+
+    if (ensName) {
+      setWalletAddress(ensName);
+    } else if (unstoppableDomainsUrl) {
+      setWalletAddress(unstoppableDomainsUrl);
+    } else {
+      setWalletAddress(address);
+    }
 
     setWalletProvider(provider);
-    setWalletAddress(ensName ?? address);
   };
 
   let selectedTab = 0;
