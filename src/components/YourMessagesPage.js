@@ -63,7 +63,9 @@ const YourMessagesPage = (props) => {
 
   if (!walletProvider) {
     return (
-      <div className="text-center text-2xl">Please connect your wallet</div>
+      <div className="text-slate-900 py-12 text-center text-2xl">
+        Please connect your wallet
+      </div>
     )
   }
 
