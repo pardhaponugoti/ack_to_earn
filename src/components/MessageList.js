@@ -1,64 +1,54 @@
-import React from "react";
-import { Button, Divider, CardContent, Typography } from "@mui/material";
-import Moment from "react-moment";
+import React from 'react'
+import Moment from 'react-moment'
+import { formatEther } from 'ethers/lib/utils'
 
 function MessageList(props) {
-  const { data, setSelectedMessage, selectedMessage } = props;
+  const { data, setSelectedMessage, selectedMessage } = props
 
   return (
-    <div style={{ height: "80vh", overflow: "auto" }}>
+    <div className="space-y-4">
       {data ? (
         data.map((message, index) => (
-          <div key={index} sx={{ minWidth: 275 }}>
-            <CardContent
-              className={
-                selectedMessage && message.id === selectedMessage.id
-                  ? "bg-blue-200"
-                  : ""
-              }
-              onClick={() => setSelectedMessage(message)}
-            >
-              <div style={{ textAlign: "right", paddingBottom: "0.5rem" }}>
-                <Button
-                  style={{
-                    fontSize: "0.7rem",
-                    backgroundColor: message.claimed ? "grey" : "green",
-                    color: "white",
-                    textTransform: "none",
-                  }}
-                >
-                  {message.claimed ? (
-                    "Claimed"
-                  ) : (
-                    <React.Fragment>
-                      Expires on &nbsp;
-                      <Moment add={{ day: 7 }} format=" MM-DD-YYYY HH:mm">
-                        {message.timestamp}
-                      </Moment>
-                    </React.Fragment>
-                  )}
-                </Button>
+          <div
+            key={index}
+            onClick={() => setSelectedMessage(message)}
+            className={`px-4 py-4 space-y-4 rounded-lg border ${
+              selectedMessage && message.id === selectedMessage.id
+                ? `border-slate-200 bg-white shadow-sm`
+                : `border-slate-200 hover:border-slate-200 cursor-pointer`
+            }`}
+          >
+            <div className="flex items-center justify-between space-x-12">
+              <div className="flex-grow truncate">{message.bidder}</div>
+              <div className="flex-shrink-0 whitespace-nowrap text-gray-400">
+                <Moment fromNow>{message.timestamp}</Moment>
               </div>
-              <div className="flex items-start justify-between">
-                <Typography noWrap sx={{ mb: 1.5 }} color="text.primary">
-                  {message.recipient}
-                </Typography>
-                <p className="pl-36">
-                  {message.recipientAmount.toString() / 10 ** 18}Eth
-                </p>
+            </div>
+            <div>{message.message}</div>
+            <div className="flex items-center justify-between text-sm px-3 py-2 border border-slate-100 rounded">
+              <div>{formatEther(message.recipientAmount)} ETH</div>
+              <div>
+                {message.claimed ? (
+                  <div className="px-2 py-0.5 bg-green-100 text-green-600 rounded">
+                    Claimed
+                  </div>
+                ) : (
+                  <div className="text-red-400">
+                    Expires in{' '}
+                    <Moment add={{ day: 7 }} fromNow ago>
+                      {message.timestamp}
+                    </Moment>
+                  </div>
+                )}
               </div>
-              <Typography noWrap variant="body2" color="text.secondary">
-                {message.message}
-              </Typography>
-            </CardContent>
-            <Divider />
+            </div>
           </div>
         ))
       ) : (
-        <h1>No messages yet...</h1>
+        <div className="text-center py-8">No messages yet...</div>
       )}
     </div>
-  );
+  )
 }
 
-export default MessageList;
+export default MessageList

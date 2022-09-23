@@ -1,15 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom'
 
-import { PAGE_ROUTE_SEND_MESSAGE } from "../constants/Routing";
+import { PAGE_ROUTE_SEND_MESSAGE } from '../constants/Routing'
 
 const HowItWorksPage = () => {
   return (
-    <div className="text-lg max-w-lg mx-auto">
-      <h4 className="text-lg mt-8">
+    <div className="text-lg max-w-lg mx-auto py-8">
+      <h4 className="text-lg">
         Ack-to-earn lets you get in touch with great engineers
       </h4>
       <div className="mt-8 text-xl">
-        For{" "}
+        For{' '}
         <strong className="text-violet-700 underline underline-offset-4">
           Senders
         </strong>
@@ -27,7 +27,7 @@ const HowItWorksPage = () => {
         </li>
       </ol>
       <div className="mt-8 text-xl">
-        For{" "}
+        For{' '}
         <strong className="text-violet-700 underline underline-offset-4">
           Recipients
         </strong>
@@ -46,7 +46,7 @@ const HowItWorksPage = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default HowItWorksPage;
+export default HowItWorksPage
