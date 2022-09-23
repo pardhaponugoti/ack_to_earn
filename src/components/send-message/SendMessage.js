@@ -9,6 +9,7 @@ import "./SendMessage.css";
 import question from "../../images/question.png";
 import { sendMessage } from "../../utils/Contract";
 import { getStorageClient } from "../../utils/FileStorage";
+import { resolveUrl } from "../../utils/UnstoppableDomains";
 
 function SendMessage(props) {
   const { walletProvider, transactionCount, setTransactionCount } = props;
@@ -45,8 +46,16 @@ function SendMessage(props) {
 
     setIsLoading(true);
 
-    const resolvedAddress = await getResolvedEnsAddress();
-    const recipientWalletAddress = resolvedAddress ?? recipientWallet;
+    const resolvedEnsAddress = await getResolvedEnsAddress();
+    const resolvedUnstoppableDomainsAddress = await resolveUrl(recipientWallet);
+    let recipientWalletAddress = recipientWallet;
+
+    if (resolvedEnsAddress) {
+      recipientWalletAddress = resolvedEnsAddress;
+    } else if (resolvedUnstoppableDomainsAddress) {
+      recipientWalletAddress = resolvedUnstoppableDomainsAddress;
+    }
+
     const sendMessageResult = await sendMessage(
       walletProvider,
       message,
@@ -145,6 +154,7 @@ function SendMessage(props) {
               type="number"
               className="shadow-sm bg-gray-50 border  border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-ligh"
               placeholder="1"
+              min="0"
               onChange={(e) => setBidAmount(e.target.value)}
               value={bidAmount}
               disabled={isLoading}
