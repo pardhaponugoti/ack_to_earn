@@ -12,7 +12,7 @@ function MessageList(props) {
           <div
             key={index}
             onClick={() => setSelectedMessage(message)}
-            className={`px-4 py-4 space-y-4 rounded-lg border ${
+            className={`px-4 py-4 rounded-lg border ${
               selectedMessage && message.id === selectedMessage.id
                 ? `border-slate-200 bg-white shadow-sm`
                 : `border-slate-200 hover:border-slate-200 cursor-pointer`
@@ -24,7 +24,10 @@ function MessageList(props) {
                 <Moment fromNow>{message.timestamp}</Moment>
               </div>
             </div>
-            <div>{message.message}</div>
+            <div className="py-4">{message.message}</div>
+            <div className="text-sm font-bold text-slate-900 pb-1">
+              Acknowledge to earn
+            </div>
             <div className="flex items-center justify-between text-sm px-3 py-2 border border-slate-100 rounded">
               <div>{formatEther(message.recipientAmount)} ETH</div>
               <div>
