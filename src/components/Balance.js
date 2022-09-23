@@ -4,8 +4,6 @@ function Balance(props) {
   const {
     walletProvider,
     walletAddress,
-    receivedMessagesBalance,
-    sentMessagesBalance,
     transactionCount,
     setTransactionCount,
   } = props
