@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { getMessages } from '../utils/Contract'
-import { Grid } from '@mui/material'
 import SideBar from './SideBar'
 import MessageList from './MessageList'
 import SelectedMessage from './SelectedMessage'

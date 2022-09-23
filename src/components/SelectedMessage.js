@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { claimBalance } from '../utils/Contract'
-import { Button, CardContent, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 import Moment from 'react-moment'
 import { EmailOutlined } from '@mui/icons-material'
 import { formatEther } from 'ethers/lib/utils'

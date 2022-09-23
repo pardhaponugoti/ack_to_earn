@@ -4,13 +4,6 @@ import { ethers } from 'ethers'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { reverseUrl } from './utils/UnstoppableDomains'
 
-import AppBar from '@mui/material/AppBar'
-import { Tab } from '@headlessui/react'
-//import Tabs from "@mui/material/Tabs";
-//import Tab from "@mui/material/Tab";
-import Toolbar from '@mui/material/Toolbar'
-import Typography from '@mui/material/Typography'
-
 import HowItWorksPage from './components/HowItWorksPage'
 import SendMessagePage from './components/send-message/SendMessage'
 import YourMessagesPage from './components/YourMessagesPage'
@@ -78,13 +71,13 @@ function App() {
           </div>
           <div className="text-md flex items-center justify-center space-x-2">
             <Link to={PAGE_ROUTE_YOUR_MESSAGES}>
-              <NavBarLink title="Your Messages" active={selectedTab == 2} />
+              <NavBarLink title="Your Messages" active={selectedTab === 2} />
             </Link>
             <Link to={PAGE_ROUTE_SEND_MESSAGE}>
-              <NavBarLink title="Send Message" active={selectedTab == 1} />
+              <NavBarLink title="Send Message" active={selectedTab === 1} />
             </Link>
             <Link to={'/'}>
-              <NavBarLink title="How it Works" active={selectedTab == 0} />
+              <NavBarLink title="How it Works" active={selectedTab === 0} />
             </Link>
           </div>
         </div>
@@ -92,7 +85,7 @@ function App() {
           {walletAddress ? (
             <div className="flex items-center space-x-4">
               <Link to={PAGE_ROUTE_BALANCE}>
-                <NavBarLink title="Your Balance" active={selectedTab == 3} />
+                <NavBarLink title="Your Balance" active={selectedTab === 3} />
               </Link>
               <div className="w-24 truncate">{walletAddress}</div>
             </div>

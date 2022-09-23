@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { getBalance, withdrawFunds } from '../utils/Contract'
-import { Button, Card, Container } from '@mui/material'
 function Balance(props) {
   const {
     walletProvider,
@@ -27,8 +26,8 @@ function Balance(props) {
   }
 
   return (
-    <div className="h-screen">
-      <div className="px-6 py-6 mt-12 bg-white flex mx-auto max-w-lg border-1 border-slate-100 justify-center">
+    <div className="pt-12">
+      <div className="px-6 py-6 rounded-lg bg-white flex mx-auto max-w-lg border border-slate-100 justify-center">
         <div className="p-6 ">
           <p className="font-bold text-lg py-1">Balances</p>
           <div className="flex py-1">

@@ -6,7 +6,6 @@ import detectEthereumProvider from '@metamask/detect-provider'
 import CircularProgress from '@mui/material/CircularProgress'
 
 import './SendMessage.css'
-import question from '../../images/question.png'
 import { sendMessage } from '../../utils/Contract'
 import { getStorageClient } from '../../utils/FileStorage'
 import { resolveUrl } from '../../utils/UnstoppableDomains'
@@ -97,9 +96,9 @@ function SendMessage(props) {
       <Dialog
         open={isOpen}
         onClose={() => setIsOpen(false)}
-        className="fixed z-40 inset-0"
+        className="fixed z-40 inset-0 bg-black bg-opacity-10 backdrop-blur-sm flex flex-col items-center justify-center"
       >
-        <Dialog.Panel className="bg-slate-100 p-8 mx-auto max-w-sm border rounded-lg shadow-sm my-96">
+        <Dialog.Panel className="bg-slate-100 p-8 mx-auto max-w-sm border rounded-lg shadow-sm">
           <Dialog.Title className="text-lg font-semibold">
             What's a response address?
           </Dialog.Title>
@@ -107,7 +106,7 @@ function SendMessage(props) {
             Add an email address so that you're recipient can contact you
             outside of Ack to Earn.
           </Dialog.Description>
-          <div className="flex">
+          <div className="flex justify-end">
             <button
               className="mt-4 font-semibold rounded-xl text-sm uppercase inline-block px-4 py-1 text-violet-700 hover:bg-slate-100"
               onClick={() => setIsOpen(false)}
@@ -157,15 +156,15 @@ function SendMessage(props) {
             />
           </label>
 
-          <label className="block">
+          <div>
             <div className="flex justify-between">
-              <span className="text-slate-800">Response address</span>
-              <span
+              <div className="text-slate-800">Response address</div>
+              <div
                 className="italic text-slate-500 text-bold cursor-pointer "
                 onClick={() => setIsDialogOpen(!isDialogOpen)}
               >
                 what is this?
-              </span>
+              </div>
               <MyDialog isOpen={isDialogOpen}></MyDialog>
             </div>
 
@@ -178,7 +177,7 @@ function SendMessage(props) {
               value={email}
               disabled={isLoading}
             />
-          </label>
+          </div>
 
           <label className="block">
             <span className="text-slate-800">Bid amount (ETH)</span>
