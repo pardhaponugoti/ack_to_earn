@@ -29,27 +29,27 @@ function Balance(props) {
     <div className="pt-12">
       <div className="px-6 py-6 rounded-lg bg-white flex mx-auto max-w-lg border border-slate-100 justify-center">
         <div className="p-6 ">
-          <p className="font-bold text-lg py-1">Balances</p>
-          <div className="flex py-1">
-            <p className="basis-1/2">
+          <p className="font-bold text-lg py-1">Balance</p>
+          <div className="space-y-4 py-1">
+            {/*<p className="">
               In received messages:
               <span className="font-medium">
                 {' '}
                 {receivedMessagesBalance} Eth
               </span>
             </p>
-            <p className="basis-1/2">
+          </div>
+          <div className="flex py-1">
+            <p className="">
+              In sent messages:{' '}
+              <span className="font-medium"> {sentMessagesBalance} Eth</span>
+  </p>*/}
+            <p className="">
               Available to claim:
               <span className="font-medium"> {balance} Eth</span>
             </p>
-          </div>
-          <div className="flex py-1">
-            <p className="basis-1/2">
-              In sent messages:{' '}
-              <span className="font-medium"> {sentMessagesBalance} Eth</span>
-            </p>
             <button
-              className="font-semibold rounded-xl drop-shadow-md uppercase inline-block px-8 py-2 bg-violet-700 text-gray-100 text-bold"
+              className="font-semibold rounded-xl drop-shadow-md uppercase px-8 py-2 bg-violet-700 text-gray-100 text-bold"
               onClick={sendToWallet}
               disabled={balance <= 0 ? true : false}
             >
