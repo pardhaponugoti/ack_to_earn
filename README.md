@@ -1,5 +1,9 @@
 # [ack_to_earn](ack-to-earn.web.app)
 
+**Note**
+
+This is currently live on the Rinkeby chain. When connecting your wallet to the dapp, please choose the Rinkeby Test Network and get some free Rinkeby Eth from a [faucet](https://faucets.chain.link/) if you don't have any.
+
 ## Overview
 
 Welcome to Ack to Earn! This dapp allows web3 users to pay others to read messages sent to their wallets. It also incorporates ENS and Unstoppable Domains to allow them to be messaged with their usernames on those platforms.
@@ -44,3 +48,25 @@ Here you'll see an inbox view of all your messages. Acknowledge a message to acc
 The last (and best) part! You've acknowledged messages and have earned some ether. Go to [ack-to-earn.web.app/balance](ack-to-earn.web.app/balance) to get it.
 
 <img width="400" alt="Screen Shot 2022-09-24 at 5 01 47 PM" src="https://user-images.githubusercontent.com/14807133/192118655-1b51af98-7fc5-428c-b895-3c229a27214b.png">
+
+## Code Overview
+
+The smart contract is [AckToEarn.sol](https://github.com/pardhaponugoti/ack_to_earn/blob/main/contracts/AckToEarn.sol). It stores all of the messages that were sent and their status, along with ether balances for all of the users.
+
+The frontend is written in React and can be viewed in the [src](https://github.com/pardhaponugoti/ack_to_earn/tree/main/src) folder.
+
+**Note that this is only live on Rinkeby at this point in time**
+
+### Technologies Used
+
+#### IPFS/Filecoin
+
+Web3Storage allows users to attach files to messages. This could be useful when sending a resume or more rich media on the platform.
+
+#### ENS
+
+Our ENS integration allows users to be messaged via their `.eth` domains.
+
+#### Unstoppable Domains
+
+Our Unstoppable Domains integration allows users to be messaged via their Unstoppable Domains domain name.
