@@ -1,67 +1,63 @@
-import { useEffect, useState } from "react";
-import { getBalance, withdrawFunds } from "../utils/Contract";
-import { Button, Card, Container } from "@mui/material";
+import { useEffect, useState } from 'react'
+import { getBalance, withdrawFunds } from '../utils/Contract'
 function Balance(props) {
   const {
     walletProvider,
     walletAddress,
-    receivedMessagesBalance,
-    sentMessagesBalance,
     transactionCount,
     setTransactionCount,
-  } = props;
-  const [balance, setBalance] = useState(0);
+  } = props
+  const [balance, setBalance] = useState(0)
 
   useEffect(() => {
     const getMyBalance = async () => {
-      const balance = await getBalance(walletProvider, walletAddress);
-      setBalance(balance);
-    };
+      const balance = await getBalance(walletProvider, walletAddress)
+      setBalance(balance)
+    }
 
-    getMyBalance();
-  }, [walletProvider, walletAddress, transactionCount]);
+    getMyBalance()
+  }, [walletProvider, walletAddress, transactionCount])
 
   const sendToWallet = async () => {
-    await withdrawFunds(walletProvider, balance);
-    setTransactionCount(transactionCount + 1);
-  };
+    await withdrawFunds(walletProvider, balance)
+    setTransactionCount(transactionCount + 1)
+  }
 
   return (
-    <div className="bg-blue-100 h-screen">
-      <Container className=" pt-12">
-        <Card className="p-6 ">
-          <p className="font-bold text-lg py-1">Balances</p>
-          <div className="flex py-1">
-            <p className="basis-1/2">
+    <div className="pt-12">
+      <div className="px-6 py-6 rounded-lg bg-white flex mx-auto max-w-lg border border-slate-100 justify-center">
+        <div className="p-6 ">
+          <p className="font-bold text-lg py-1">Balance</p>
+          <div className="space-y-4 py-1">
+            {/*<p className="">
               In received messages:
               <span className="font-medium">
-                {" "}
+                {' '}
                 {receivedMessagesBalance} Eth
               </span>
             </p>
-            <p className="basis-1/2">
+          </div>
+          <div className="flex py-1">
+            <p className="">
+              In sent messages:{' '}
+              <span className="font-medium"> {sentMessagesBalance} Eth</span>
+  </p>*/}
+            <p className="">
               Available to claim:
               <span className="font-medium"> {balance} Eth</span>
             </p>
-          </div>
-          <div className="flex py-1">
-            <p className="basis-1/2">
-              In sent messages:{" "}
-              <span className="font-medium"> {sentMessagesBalance} Eth</span>
-            </p>
-            <Button
-              className="basis-1/4"
-              variant="contained"
+            <button
+              className="font-semibold rounded-xl drop-shadow-md uppercase px-8 py-2 bg-violet-700 text-gray-100 text-bold"
               onClick={sendToWallet}
               disabled={balance <= 0 ? true : false}
             >
               Send to wallet
-            </Button>
+            </button>
           </div>
-        </Card>
-      </Container>
+        </div>
+      </div>
     </div>
-  );
+  )
 }
 
-export default Balance;
+export default Balance

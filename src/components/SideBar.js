@@ -1,68 +1,35 @@
-import {
-  Box,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-} from "@mui/material";
-function SideBar(props) {
-  const { messageType, setMessageType } = props;
-
+function SideBarButton(props) {
   return (
-    <div>
-      <Box
-        sx={{
-          width: "100%",
-          maxWidth: 360,
-          bgcolor: "background.paper",
-        }}
-      >
-        <List style={{ backgroundColor: "#dfdddd6b", height: "88vh" }}>
-          <ListItem
-            disablePadding
-            className={messageType === "Inbox" ? "bg-gray-300" : ""}
-          >
-            <ListItemButton onClick={() => setMessageType("Inbox")}>
-              <ListItemText primary="Inbox" />
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem
-            disablePadding
-            className={messageType === "Sent" ? "bg-gray-300" : ""}
-          >
-            <ListItemButton onClick={() => setMessageType("Sent")}>
-              <ListItemText primary="Sent" />
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemText primary="Drafts" />
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemText primary="Favorites" />
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemText primary="Notes" />
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemText primary="Others" />
-            </ListItemButton>
-          </ListItem>
-        </List>
-      </Box>
-    </div>
-  );
+    <button
+      onClick={props.onClick}
+      className={`text-left px-4 py-2 rounded-lg ${
+        props.selected
+          ? `bg-slate-200 text-black font-semibold`
+          : `hover:bg-slate-200 text-slate-500 hover:text-black`
+      }`}
+    >
+      {props.title}
+    </button>
+  )
 }
 
-export default SideBar;
+function SideBar(props) {
+  const { messageType, setMessageType } = props
+
+  return (
+    <div className="space-y-2 flex flex-col">
+      <SideBarButton
+        onClick={() => setMessageType('Inbox')}
+        title="Inbox"
+        selected={messageType === 'Inbox'}
+      />
+      <SideBarButton
+        onClick={() => setMessageType('Sent')}
+        title="Sent"
+        selected={messageType === 'Sent'}
+      />
+    </div>
+  )
+}
+
+export default SideBar

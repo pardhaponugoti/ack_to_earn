@@ -1,11 +1,9 @@
-import { useState, useEffect } from "react";
-import { getMessages } from "../utils/Contract";
-import { Grid } from "@mui/material";
-import SideBar from "./SideBar";
-import MessageList from "./MessageList";
-import SelectedMessage from "./SelectedMessage";
-import Filters from "./Filters";
-import MessageTools from "./MessageTools";
+import { useState, useEffect } from 'react'
+import { getMessages } from '../utils/Contract'
+import SideBar from './SideBar'
+import MessageList from './MessageList'
+import SelectedMessage from './SelectedMessage'
+import Filters from './Filters'
 
 const YourMessagesPage = (props) => {
   const {
@@ -13,118 +11,113 @@ const YourMessagesPage = (props) => {
     walletAddress,
     transactionCount,
     setTransactionCount,
-  } = props;
-  const [selectedMessage, setSelectedMessage] = useState(null);
-  const [allMessages, setAllMessages] = useState([]);
-  const [messageType, setMessageType] = useState("Inbox");
-  const [filterCategory, setFilterCategory] = useState("All");
+  } = props
+  const [selectedMessage, setSelectedMessage] = useState(null)
+  const [allMessages, setAllMessages] = useState([])
+  const [messageType, setMessageType] = useState('Inbox')
+  const [filterCategory, setFilterCategory] = useState('All')
 
   const isMessageExpired = (message) => {
-    let timeStamp = message.timestamp.toString();
-    timeStamp = timeStamp * 1000; //converts it to milliseconds
-    let deadlineDay = new Date(timeStamp);
-    deadlineDay.setHours(deadlineDay.getHours() + 168); // add 7 days
-    const date1 = new Date(deadlineDay);
-    const date2 = new Date();
-    const remainder = (date1 - date2) / 1000 / 60 / 60 / 24;
-    return remainder < 0;
-  };
+    let timeStamp = message.timestamp.toString()
+    timeStamp = timeStamp * 1000 //converts it to milliseconds
+    let deadlineDay = new Date(timeStamp)
+    deadlineDay.setHours(deadlineDay.getHours() + 168) // add 7 days
+    const date1 = new Date(deadlineDay)
+    const date2 = new Date()
+    const remainder = (date1 - date2) / 1000 / 60 / 60 / 24
+    return remainder < 0
+  }
 
   const setFilterCategoryAndResetMessage = (filterCategory) => {
-    setFilterCategory(filterCategory);
-    setSelectedMessage(null);
-  };
+    setFilterCategory(filterCategory)
+    setSelectedMessage(null)
+  }
 
   useEffect(() => {
     const fetchMessages = async () => {
-      const messages = await getMessages(walletProvider);
+      const messages = await getMessages(walletProvider)
       const yourMessages = messages
         .filter((message) => {
           return (
             message.bidder === walletAddress ||
             message.recipient === walletAddress
-          );
+          )
         })
         .map((message) => {
           return {
             expired: isMessageExpired(message),
             ...message,
-          };
+          }
         })
         .sort((message1, message2) => {
-          return message2.timestamp - message1.timestamp;
-        });
+          return message2.timestamp - message1.timestamp
+        })
 
-      setAllMessages(yourMessages);
-    };
+      setAllMessages(yourMessages)
+    }
 
     if (walletProvider) {
-      fetchMessages();
+      fetchMessages()
     }
-  }, [walletProvider, walletAddress, transactionCount]);
+  }, [walletProvider, walletAddress, transactionCount])
 
   if (!walletProvider) {
     return (
-      <div className="text-center text-2xl">Please connect your wallet</div>
-    );
+      <div className="text-slate-900 py-12 text-center text-2xl">
+        Please connect your wallet
+      </div>
+    )
   }
 
-  let filteredMessages = allMessages;
+  let filteredMessages = allMessages
 
   // Filter by message type
-  if (messageType === "Inbox") {
+  if (messageType === 'Inbox') {
     filteredMessages = filteredMessages.filter(
-      (message) => message.recipient === walletAddress
-    );
+      (message) => message.recipient === walletAddress,
+    )
   }
-  if (messageType === "Sent") {
+  if (messageType === 'Sent') {
     filteredMessages = filteredMessages.filter(
-      (message) => message.bidder === walletAddress
-    );
+      (message) => message.bidder === walletAddress,
+    )
   }
 
   // Filter by category
-  if (filterCategory === "Active") {
+  if (filterCategory === 'Active') {
     filteredMessages = filteredMessages.filter(
-      (message) => !message.expired && !message.claimed
-    );
+      (message) => !message.expired && !message.claimed,
+    )
   }
-  if (filterCategory === "Expired") {
+  if (filterCategory === 'Expired') {
     filteredMessages = filteredMessages.filter(
-      (message) => message.expired && !message.claimed
-    );
+      (message) => message.expired && !message.claimed,
+    )
   }
-  if (filterCategory === "Claimed") {
-    filteredMessages = filteredMessages.filter((message) => message.claimed);
+  if (filterCategory === 'Claimed') {
+    filteredMessages = filteredMessages.filter((message) => message.claimed)
   }
 
   return (
-    <div className=" pt-4">
-      <Grid container spacing={0} className="bg-blue-100 align-middle p-1">
-        <Grid item xs={2}></Grid>
-        <Grid item xs={3}>
-          <Filters
-            filterCategory={filterCategory}
-            setFilterCategory={setFilterCategoryAndResetMessage}
-          />
-        </Grid>
-        <Grid item xs={7}>
-          <MessageTools />
-        </Grid>
-      </Grid>
-
-      <Grid container spacing={0}>
-        <Grid item xs={2}>
+    <div className="divide-y divide-gray-200">
+      <div className="px-8 py-4 flex items-center justify-between bg-white">
+        <Filters
+          filterCategory={filterCategory}
+          setFilterCategory={setFilterCategoryAndResetMessage}
+        />
+      </div>
+      <div className="grid grid-cols-7 p-4 gap-4">
+        <div className="col-span-1">
           <SideBar setMessageType={setMessageType} messageType={messageType} />
-        </Grid>
-        <Grid item xs={3}>
+        </div>
+        <div className="col-span-2">
           <MessageList
             data={filteredMessages}
             setSelectedMessage={setSelectedMessage}
             selectedMessage={selectedMessage}
           />
-        </Grid>
-        <Grid item xs={7}>
+        </div>
+        <div className="col-span-4">
           <SelectedMessage
             selectedMessage={selectedMessage}
             walletProvider={walletProvider}
@@ -132,10 +125,10 @@ const YourMessagesPage = (props) => {
             transactionCount={transactionCount}
             setTransactionCount={setTransactionCount}
           />
-        </Grid>
-      </Grid>
+        </div>
+      </div>
     </div>
-  );
-};
+  )
+}
 
-export default YourMessagesPage;
+export default YourMessagesPage

@@ -1,33 +1,33 @@
-import Resolution from "@unstoppabledomains/resolution/build/Resolution";
+import Resolution from '@unstoppabledomains/resolution/build/Resolution'
 
-const resolution = new Resolution();
+const resolution = new Resolution()
 
 export const resolveUrl = async (domain) => {
-  let isRegistered = true;
-  let resolvedAddress = null;
+  let isRegistered = true
+  let resolvedAddress = null
 
   await resolution
     .isRegistered(domain)
     .then((isDomainRegistered) => (isRegistered = isDomainRegistered))
-    .catch(console.error);
+    .catch(console.error)
 
   if (isRegistered) {
     await resolution
-      .addr(domain, "ETH")
+      .addr(domain, 'ETH')
       .then((address) => (resolvedAddress = address))
-      .catch(console.error);
+      .catch(console.error)
   }
 
-  return resolvedAddress;
-};
+  return resolvedAddress
+}
 
 export const reverseUrl = async (address) => {
-  let url = null;
+  let url = null
 
   await resolution
-    .reverse(address, { location: "UNSLayer2" })
+    .reverse(address, { location: 'UNSLayer2' })
     .then((domain) => (url = domain))
-    .catch(console.error);
+    .catch(console.error)
 
-  return url;
-};
+  return url
+}
