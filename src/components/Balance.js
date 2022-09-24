@@ -1,27 +1,27 @@
-import { useEffect, useState } from 'react'
-import { getBalance, withdrawFunds } from '../utils/Contract'
+import { useEffect, useState } from "react";
+import { getBalance, withdrawFunds } from "../utils/Contract";
 function Balance(props) {
   const {
     walletProvider,
     walletAddress,
     transactionCount,
     setTransactionCount,
-  } = props
-  const [balance, setBalance] = useState(0)
+  } = props;
+  const [balance, setBalance] = useState(0);
 
   useEffect(() => {
     const getMyBalance = async () => {
-      const balance = await getBalance(walletProvider, walletAddress)
-      setBalance(balance)
-    }
+      const balance = await getBalance(walletProvider, walletAddress);
+      setBalance(balance);
+    };
 
-    getMyBalance()
-  }, [walletProvider, walletAddress, transactionCount])
+    getMyBalance();
+  }, [walletProvider, walletAddress, transactionCount]);
 
   const sendToWallet = async () => {
-    await withdrawFunds(walletProvider, balance)
-    setTransactionCount(transactionCount + 1)
-  }
+    await withdrawFunds(walletProvider, balance);
+    setTransactionCount(transactionCount + 1);
+  };
 
   return (
     <div className="pt-12">
@@ -29,19 +29,6 @@ function Balance(props) {
         <div className="p-6 ">
           <p className="font-bold text-lg py-1">Balance</p>
           <div className="space-y-4 py-1">
-            {/*<p className="">
-              In received messages:
-              <span className="font-medium">
-                {' '}
-                {receivedMessagesBalance} Eth
-              </span>
-            </p>
-          </div>
-          <div className="flex py-1">
-            <p className="">
-              In sent messages:{' '}
-              <span className="font-medium"> {sentMessagesBalance} Eth</span>
-  </p>*/}
             <p className="">
               Available to claim:
               <span className="font-medium"> {balance} Eth</span>
@@ -57,7 +44,7 @@ function Balance(props) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Balance
+export default Balance;

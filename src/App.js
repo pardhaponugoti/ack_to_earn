@@ -1,53 +1,56 @@
-import React, { useState } from 'react'
-import { Routes, Route, Link, useLocation } from 'react-router-dom'
-import { ethers } from 'ethers'
-import detectEthereumProvider from '@metamask/detect-provider'
-import { reverseUrl } from './utils/UnstoppableDomains'
+import React, { useState } from "react";
+import { Routes, Route, Link, useLocation } from "react-router-dom";
+import { ethers } from "ethers";
+import detectEthereumProvider from "@metamask/detect-provider";
+import { reverseUrl } from "./utils/UnstoppableDomains";
 
-import HowItWorksPage from './components/HowItWorksPage'
-import SendMessagePage from './components/send-message/SendMessage'
-import YourMessagesPage from './components/YourMessagesPage'
-import Balance from './components/Balance'
+import HowItWorksPage from "./components/HowItWorksPage";
+import SendMessagePage from "./components/send-message/SendMessage";
+import YourMessagesPage from "./components/YourMessagesPage";
+import Balance from "./components/Balance";
 
 import {
   PAGE_ROUTE_SEND_MESSAGE,
   PAGE_ROUTE_YOUR_MESSAGES,
   PAGE_ROUTE_BALANCE,
-} from './constants/Routing'
-import './App.css'
+} from "./constants/Routing";
+import "./App.css";
 
 function App() {
-  const [walletAddress, setWalletAddress] = useState(null)
-  const [walletProvider, setWalletProvider] = useState(null)
-  const [transactionCount, setTransactionCount] = useState(0)
+  const [walletName, setWalletName] = useState(null);
+  const [walletAddress, setWalletAddress] = useState(null);
+  const [walletProvider, setWalletProvider] = useState(null);
+  const [transactionCount, setTransactionCount] = useState(0);
 
   const getWallet = async () => {
-    const ethereum = await detectEthereumProvider()
-    const provider = new ethers.providers.Web3Provider(ethereum, 'any')
-    await provider.send('eth_requestAccounts', [])
-    const address = await provider.getSigner().getAddress()
-    const ensName = await provider.lookupAddress(address)
-    const unstoppableDomainsUrl = await reverseUrl(address)
+    const ethereum = await detectEthereumProvider();
+    const provider = new ethers.providers.Web3Provider(ethereum, "any");
+    await provider.send("eth_requestAccounts", []);
+    const address = await provider.getSigner().getAddress();
+    const ensName = await provider.lookupAddress(address);
+    const unstoppableDomainsUrl = await reverseUrl(address);
+
+    setWalletAddress(address);
 
     if (ensName) {
-      setWalletAddress(ensName)
+      setWalletName(ensName);
     } else if (unstoppableDomainsUrl) {
-      setWalletAddress(unstoppableDomainsUrl)
+      setWalletName(unstoppableDomainsUrl);
     } else {
-      setWalletAddress(address)
+      setWalletName(address);
     }
 
-    setWalletProvider(provider)
-  }
+    setWalletProvider(provider);
+  };
 
-  let selectedTab = 0
-  const location = useLocation()
+  let selectedTab = 0;
+  const location = useLocation();
   if (location.pathname.includes(PAGE_ROUTE_SEND_MESSAGE)) {
-    selectedTab = 1
+    selectedTab = 1;
   } else if (location.pathname.includes(PAGE_ROUTE_YOUR_MESSAGES)) {
-    selectedTab = 2
+    selectedTab = 2;
   } else if (location.pathname.includes(PAGE_ROUTE_BALANCE)) {
-    selectedTab = 3
+    selectedTab = 3;
   }
 
   function NavBarLink(props) {
@@ -59,7 +62,7 @@ function App() {
       >
         {props.title}
       </div>
-    )
+    );
   }
 
   return (
@@ -76,7 +79,7 @@ function App() {
             <Link to={PAGE_ROUTE_SEND_MESSAGE}>
               <NavBarLink title="Send Message" active={selectedTab === 1} />
             </Link>
-            <Link to={'/'}>
+            <Link to={"/"}>
               <NavBarLink title="How it Works" active={selectedTab === 0} />
             </Link>
           </div>
@@ -87,7 +90,7 @@ function App() {
               <Link to={PAGE_ROUTE_BALANCE}>
                 <NavBarLink title="Your Balance" active={selectedTab === 3} />
               </Link>
-              <div className="w-24 truncate">{walletAddress}</div>
+              <div className="w-24 truncate">{walletName}</div>
             </div>
           ) : (
             <button
@@ -137,7 +140,7 @@ function App() {
         </Route>
       </Routes>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
