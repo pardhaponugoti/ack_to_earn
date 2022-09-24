@@ -1,4 +1,4 @@
-# [ack_to_earn](ack-to-earn.web.app)
+# [ack_to_earn](https://ack-to-earn.web.app/)
 
 **Note**
 
@@ -29,7 +29,7 @@ Absolutely! With Ack to Earn, you can send someone a message and pay them when t
 
 ### Sending messages
 
-In order to send a message, head over to [ack-to-earn.web.app/send](ack-to-earn.web.app/send).
+In order to send a message, head over to [ack-to-earn.web.app/send](https://ack-to-earn.web.app/send).
 
 On this page, you'll see a form where you can specify the recipient, add a message, share an email they can reply to you at, specify a bid amount (how much they will be paid in ETH), and optionally attach a file - Thanks Filecoin! Note that the smart contract takes 10% of the bid as a fee.
 
@@ -37,7 +37,7 @@ On this page, you'll see a form where you can specify the recipient, add a messa
 
 ### Reviewing messages
 
-In order to send a message, go to [ack-to-earn.web.app/messages](ack-to-earn.web.app/messages).
+In order to send a message, go to [ack-to-earn.web.app/messages](https://ack-to-earn.web.app/messages).
 
 Here you'll see an inbox view of all your messages. Acknowledge a message to accrue an ether balance in the smart contract.
 
@@ -45,7 +45,7 @@ Here you'll see an inbox view of all your messages. Acknowledge a message to acc
 
 ### Claiming your balance
 
-The last (and best) part! You've acknowledged messages and have earned some ether. Go to [ack-to-earn.web.app/balance](ack-to-earn.web.app/balance) to get it.
+The last (and best) part! You've acknowledged messages and have earned some ether. Go to [ack-to-earn.web.app/balance](https://ack-to-earn.web.app/balance) to get it.
 
 <img width="400" alt="Screen Shot 2022-09-24 at 5 01 47 PM" src="https://user-images.githubusercontent.com/14807133/192118655-1b51af98-7fc5-428c-b895-3c229a27214b.png">
 
