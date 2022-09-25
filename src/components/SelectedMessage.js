@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import { claimBalance } from '../utils/Contract'
-import { Typography } from '@mui/material'
-import Moment from 'react-moment'
-import { EmailOutlined } from '@mui/icons-material'
-import { formatEther } from 'ethers/lib/utils'
+import React, { useEffect, useState } from "react";
+import { claimBalance } from "../utils/Contract";
+import { Typography } from "@mui/material";
+import Moment from "react-moment";
+import { EmailOutlined } from "@mui/icons-material";
+import { formatEther } from "ethers/lib/utils";
+import { reverseUrl } from "../utils/UnstoppableDomains";
 
 function SelectedMessage(props) {
   const {
@@ -11,34 +12,50 @@ function SelectedMessage(props) {
     selectedMessage,
     transactionCount,
     setTransactionCount,
-  } = props
-  const [deadline, setDeadline] = useState('1')
+  } = props;
+
+  const [deadline, setDeadline] = useState("1");
+  const [bidderDisplayName, setBidderDisplayName] = useState(null);
 
   useEffect(() => {
     const getDays = () => {
-      let timeStamp = selectedMessage?.timestamp.toString()
+      let timeStamp = selectedMessage?.timestamp.toString();
       // converts it to milliseconds
-      timeStamp = timeStamp * 1000
+      timeStamp = timeStamp * 1000;
       // convert it to day, then add 7 days
-      let deadlineDay = new Date(timeStamp)
-      deadlineDay.setHours(deadlineDay.getHours() + 168)
+      let deadlineDay = new Date(timeStamp);
+      deadlineDay.setHours(deadlineDay.getHours() + 168);
 
-      const date1 = new Date(deadlineDay)
-      const date2 = new Date()
-      const reminder = Math.floor((date1 - date2) / 1000 / 60 / 60 / 24)
-      setDeadline(reminder)
-    }
+      const date1 = new Date(deadlineDay);
+      const date2 = new Date();
+      const reminder = Math.floor((date1 - date2) / 1000 / 60 / 60 / 24);
+      setDeadline(reminder);
+    };
 
     if (selectedMessage) {
-      getDays()
+      getDays();
+
+      const getBidderDisplayName = async (message) => {
+        const ensName = await walletProvider.lookupAddress(message.bidder);
+        if (ensName) {
+          setBidderDisplayName(ensName);
+        } else {
+          const unstoppableDomainsUrl = await reverseUrl(message.bidder);
+          if (unstoppableDomainsUrl) {
+            setBidderDisplayName(unstoppableDomainsUrl);
+          }
+        }
+      };
+
+      getBidderDisplayName(selectedMessage);
     }
     // eslint-disable-next-line no-use-before-define
-  }, [selectedMessage])
+  }, [selectedMessage]);
 
   const claimMessageBalance = async (message) => {
-    await claimBalance(walletProvider, message.id.toNumber())
-    setTransactionCount(transactionCount + 1)
-  }
+    await claimBalance(walletProvider, message.id.toNumber());
+    setTransactionCount(transactionCount + 1);
+  };
 
   return (
     <div className="">
@@ -48,7 +65,7 @@ function SelectedMessage(props) {
             <div className="space-y-1">
               <div>
                 <b>From: </b>
-                {selectedMessage.bidder}
+                {bidderDisplayName ?? selectedMessage.bidder}
               </div>
               <div>
                 <b>Date: </b>
@@ -76,7 +93,7 @@ function SelectedMessage(props) {
               {selectedMessage.fileCid && (
                 <React.Fragment>
                   <Typography noWrap variant="body2" color="text.secondary">
-                    File:{' '}
+                    File:{" "}
                     <a
                       target="_blank"
                       href={`https://dweb.link/ipfs/${selectedMessage.fileCid}`}
@@ -109,7 +126,7 @@ function SelectedMessage(props) {
         </div>
       )}
     </div>
-  )
+  );
 }
 
-export default SelectedMessage
+export default SelectedMessage;
