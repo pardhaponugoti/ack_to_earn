@@ -50,7 +50,7 @@ function SelectedMessage(props) {
       getBidderDisplayName(selectedMessage);
     }
     // eslint-disable-next-line no-use-before-define
-  }, [selectedMessage]);
+  }, [selectedMessage, walletProvider]);
 
   const claimMessageBalance = async (message) => {
     await claimBalance(walletProvider, message.id.toNumber());
